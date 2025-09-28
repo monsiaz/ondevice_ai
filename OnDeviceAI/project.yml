@@ -1,6 +1,9 @@
 name: OnDeviceAI
 options:
   bundleIdPrefix: fr.simonazoulay
+  settings:
+    base:
+      PRODUCT_BUNDLE_IDENTIFIER: fr.simonazoulay.OnDeviceAI
   groupSortPosition: bottom
   deploymentTarget:
     iOS: 18.0

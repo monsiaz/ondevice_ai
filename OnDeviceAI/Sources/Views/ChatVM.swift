@@ -210,7 +210,7 @@ final class ChatVM: ObservableObject {
         // Buffer pour coalescer les tokens et éviter trop d'updates UI
         var localTokenBuffer = ""
         var updateCounter = 0
-        let batchSize = PerformanceMonitor.shared.shouldThrottleGeneration ? 5 : 3 // Plus de batching si performance issues
+        let batchSize = 3 // Taille de batch pour optimiser les performances
         
         DebugLog.shared.log("Starting optimized token processing")
         
@@ -241,7 +241,7 @@ final class ChatVM: ObservableObject {
                     let shouldUpdate = updateCounter >= batchSize || 
                                      token.contains("\n") || 
                                      token.contains(".") ||
-                                     (!PerformanceMonitor.shared.shouldThrottleGeneration && updateCounter >= 1)
+                                     updateCounter >= 1
                     
                     if shouldUpdate {
                         // Créer ou mettre à jour la bulle assistant
@@ -257,10 +257,8 @@ final class ChatVM: ObservableObject {
                         updateCounter = 0
                         self.lastTokenAt = Date()
                         
-                        // Notification moins fréquente pour le scrolling si performance issues
-                        if !PerformanceMonitor.shared.shouldThrottleGeneration {
-                            NotificationCenter.default.post(name: Notification.Name("ChatVM.didAppendToken"), object: nil)
-                        }
+                        // Notification pour le scrolling
+                        NotificationCenter.default.post(name: Notification.Name("ChatVM.didAppendToken"), object: nil)
                     }
                 }
             }

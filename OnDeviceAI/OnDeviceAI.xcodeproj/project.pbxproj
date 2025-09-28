@@ -185,7 +185,7 @@
 			path = Core;
 			sourceTree = "<group>";
 		};
-		"TEMP_B57B1EFA-3951-4393-B4BA-F6127DBB3C9B" /* Vendor */ = {
+		"TEMP_2DCFC26D-D208-4508-A3DA-1AD2A5EB3554" /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
 			);

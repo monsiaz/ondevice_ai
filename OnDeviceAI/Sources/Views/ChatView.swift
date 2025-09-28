@@ -64,7 +64,8 @@ struct ChatView: View {
                     .frame(width: 44, height: 44)
                     .contentShape(Rectangle())
             }
-            .buttonAccessibility(label: "Conversation History", hint: "View and load previous conversations")
+            .accessibilityLabel("Conversation History")
+            .accessibilityHint("View and load previous conversations")
             
             Spacer()
 
@@ -120,7 +121,8 @@ struct ChatView: View {
                         .frame(width: 44, height: 44)
                         .contentShape(Rectangle())
                 }
-                .buttonAccessibility(label: "Clear Conversation", hint: "Clear current chat and start fresh")
+                .accessibilityLabel("Clear Conversation")
+                .accessibilityHint("Clear current chat and start fresh")
             }
         }
         .buttonStyle(.plain)
