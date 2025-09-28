@@ -8,10 +8,7 @@ struct LLMSelection {
 enum LLMSelector {
     @MainActor
     static func select() -> LLMSelection {
-        #if canImport(FoundationModels)
-        return LLMSelection(llm: AppleFoundationLLM(), backendName: "Apple FM")
-        #else
+        // Always use MLX for demo version - Apple FM requires iOS 26+
         return LLMSelection(llm: MLXLLM(), backendName: "MLX")
-        #endif
     }
 }
