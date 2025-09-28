@@ -1,0 +1,76 @@
+# Xcode
+*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+UserInterfaceState.xcuserstate
+project.xcworkspace/
+xcuserdata/
+
+# Build artifacts
+build/
+DerivedData/
+
+# CocoaPods
+Pods/
+
+# Swift Package Manager
+.swiftpm/
+Package.resolved
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# Code Injection
+iOSInjectionProject/
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Personal notes and development artifacts
+notes/
+TODO.md
+NOTES.md
+
+# Large media files (keep captures for demo)
+# *.mov
+# *.mp4
+# *.avi
+
+# Keep essential documentation and demo files
+!README.md
+!docs/
+!Captures/
+
+# GitHub Pages
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+OnDeviceAI/OnDeviceAI/Sources/Resources/qwen2.5-0.5b-instruct-4bit/model.safetensors

@@ -1,0 +1,335 @@
+import Foundation
+import SwiftUI
+
+enum AppLanguage: String, CaseIterable {
+    case english = "en"
+    case french = "fr" 
+    case spanish = "es"
+    case german = "de"
+    
+    var displayName: String {
+        switch self {
+        case .english: return "English"
+        case .french: return "Français"
+        case .spanish: return "Español"
+        case .german: return "Deutsch"
+        }
+    }
+    
+    var flag: String {
+        switch self {
+        case .english: return "🇺🇸"
+        case .french: return "🇫🇷"
+        case .spanish: return "🇪🇸"
+        case .german: return "🇩🇪"
+        }
+    }
+}
+
+struct LocalizedString {
+    static func get(_ key: String, language: AppLanguage = .english) -> String {
+        switch language {
+        case .english: return englishStrings[key] ?? key
+        case .french: return frenchStrings[key] ?? englishStrings[key] ?? key
+        case .spanish: return spanishStrings[key] ?? englishStrings[key] ?? key
+        case .german: return germanStrings[key] ?? englishStrings[key] ?? key
+        }
+    }
+    
+    private static let englishStrings: [String: String] = [
+        "app_name": "OnDeviceAI",
+        "backend": "Backend",
+        "models": "Models",
+        "clear": "Clear",
+        "chat": "Chat",
+        "history": "History",
+        "settings": "Settings",
+        "ask_anything": "Ask anything…",
+        "send": "Send",
+        "hide": "Hide",
+        "appearance": "Appearance",
+        "behavior": "Behavior",
+        "about": "About",
+        "connect": "Connect",
+        "language": "Language",
+        "theme": "Theme",
+        "system": "System",
+        "light": "Light",
+        "dark": "Dark",
+        "show_keyboard_launch": "Show keyboard on launch",
+        "follow_twitter": "Follow @SimonAzoulayFr",
+        "legal": "Legal",
+        "tutorial": "Tutorial",
+        "resources": "Resources",
+        "personalization": "Personalization",
+        "system_prompt": "System Prompt",
+        "how_it_works": "How It Works",
+        "usage_tips": "Usage Tips",
+        "download_models": "Download Models",
+        "download_more": "Download More",
+        "built_in": "Built-in",
+        "switch_model": "Switch Model",
+        "search_models": "Search models",
+        "filter_multilingual": "Multilingual",
+        "filter_creative": "Creative",
+        "filter_reasoning": "Reasoning",
+        "search_conversations": "Search conversations…",
+        "clear_history_alert_title": "Clear History?",
+        "clear_all_button": "Clear All",
+        "terms_of_use": "Terms of Use",
+        "privacy_policy": "Privacy Policy",
+        "licenses": "Licenses",
+        "personalization_desc": "Customize how the AI responds by entering your own system prompt below. This prompt will guide the AI’s behavior and tone during conversations.",
+        "reset": "Reset",
+        "save": "Save",
+        "privacy_tagline": "Private, on-device AI. Your data stays on your iPhone.",
+        
+        "Recommended for you": "Recommended for you",
+        "Fast & Light": "Fast & Light",
+        "Powerful & Versatile": "Powerful & Versatile",
+        "Specialized (Code, Vision)": "Specialized (Code, Vision)",
+
+        "howitworks_privacy_title": "100% Private & On-Device",
+        "howitworks_privacy_desc": "All AI processing happens directly on your iPhone. Your data never leaves your device, ensuring complete confidentiality.",
+        "howitworks_offline_title": "Works Offline",
+        "howitworks_offline_desc": "Because the models run locally, the app works perfectly without an internet connection. Ideal for travel or when you have poor connectivity.",
+        "howitworks_performance_title": "Optimized for Apple Silicon",
+        "howitworks_performance_desc": "Leveraging the power of MLX, the app is designed to be extremely fast and efficient on Apple Silicon, providing instant responses.",
+        "howitworks_models_title": "Choose Your Model",
+        "howitworks_models_desc": "You can download different AI models based on your needs, from ultra-fast and lightweight to powerful and complex.",
+        
+        "tip_context_title": "Provide Context",
+        "tip_context_desc": "The more context you provide in your prompt, the better the AI will understand your request and give a relevant answer. Instead of 'write an email', try 'write a professional email to my boss summarizing our weekly progress'.",
+        "tip_persona_title": "Assign a Persona",
+        "tip_persona_desc": "Ask the AI to act as an expert in a certain field. For example, 'Act as a senior copywriter and give me 5 catchy headlines for a new coffee brand'.",
+        "tip_format_title": "Specify the Format",
+        "tip_format_desc": "Tell the AI exactly how you want the output formatted. You can ask for a list, a table, a JSON object, or a block of code.",
+        "tip_iterate_title": "Iterate and Refine",
+        "tip_iterate_desc": "Don't hesitate to refine your request in a follow-up message if the first answer isn't perfect. You can say 'make it shorter', 'use a more formal tone', or 'add more details about...'",
+        
+        // Page subtitles
+        "legal_subtitle": "Important information about your rights and our policies",
+        "resources_subtitle": "Model recommendations based on your device",
+        "howitworks_subtitle": "Understanding on-device AI technology",
+        "tips_subtitle": "Get the best results from your AI assistant",
+        "terms_subtitle": "Terms and conditions for using OnDeviceAI",
+        "privacy_subtitle": "How we protect your privacy and data",
+        "licenses_subtitle": "Open source licenses and attributions"
+    ]
+    
+    private static let frenchStrings: [String: String] = [
+        "app_name": "OnDeviceAI",
+        "backend": "Moteur",
+        "models": "Modèles",
+        "clear": "Effacer",
+        "chat": "Chat",
+        "history": "Historique",
+        "settings": "Réglages",
+        "ask_anything": "Demandez n'importe quoi…",
+        "send": "Envoyer",
+        "hide": "Masquer",
+        "appearance": "Apparence",
+        "behavior": "Comportement",
+        "about": "À propos",
+        "connect": "Contact",
+        "language": "Langue",
+        "theme": "Thème",
+        "system": "Système",
+        "light": "Clair",
+        "dark": "Sombre",
+        "show_keyboard_launch": "Afficher le clavier au lancement",
+        "follow_twitter": "Suivre @SimonAzoulayFr",
+        "legal": "Mentions légales",
+        "tutorial": "Tutoriel",
+        "resources": "Ressources",
+        "personalization": "Personnalisation",
+        "system_prompt": "Prompt Système",
+        "how_it_works": "Comment ça marche",
+        "usage_tips": "Conseils d'utilisation",
+        "download_models": "Télécharger des modèles",
+        "download_more": "Télécharger plus",
+        "built_in": "Intégré",
+        "switch_model": "Changer de modèle",
+        "search_models": "Rechercher des modèles",
+        "filter_multilingual": "Multilingue",
+        "filter_creative": "Créatif",
+        "filter_reasoning": "Raisonnement",
+        "search_conversations": "Rechercher des conversations…",
+        "clear_history_alert_title": "Vider l'historique ?",
+        "clear_all_button": "Tout vider",
+        "terms_of_use": "Conditions d'utilisation",
+        "privacy_policy": "Politique de confidentialité",
+        "licenses": "Licences",
+        "personalization_desc": "Personnalisez la façon dont l'IA répond en entrant votre propre prompt système ci-dessous. Ce prompt guidera le comportement et le ton de l'IA pendant les conversations.",
+        "reset": "Réinitialiser",
+        "save": "Enregistrer",
+        "privacy_tagline": "IA privée, 100% sur l'appareil. Vos données restent sur l’iPhone.",
+        
+        "Recommended for you": "Recommandé pour vous",
+        "Fast & Light": "Rapides & Légers",
+        "Powerful & Versatile": "Puissants & Polyvalents",
+        "Specialized (Code, Vision)": "Spécialisés (Code, Vision)",
+
+        "howitworks_privacy_title": "100% Privé & sur l'appareil",
+        "howitworks_privacy_desc": "Tout le traitement de l'IA se fait directement sur votre iPhone. Vos données ne quittent jamais votre appareil, garantissant une confidentialité totale.",
+        "howitworks_offline_title": "Fonctionne hors ligne",
+        "howitworks_offline_desc": "Parce que les modèles s'exécutent localement, l'application fonctionne parfaitement sans connexion Internet. Idéal en voyage ou en cas de mauvaise connectivité.",
+        "howitworks_performance_title": "Optimisé pour Apple Silicon",
+        "howitworks_performance_desc": "Exploitant la puissance de MLX, l'application est conçue pour être extrêmement rapide et efficace sur Apple Silicon, fournissant des réponses instantanées.",
+        "howitworks_models_title": "Choisissez votre modèle",
+        "howitworks_models_desc": "Vous pouvez télécharger différents modèles d'IA en fonction de vos besoins, de l'ultra-rapide et léger au puissant et complexe.",
+
+        "tip_context_title": "Fournissez du contexte",
+        "tip_context_desc": "Plus vous donnez de contexte dans votre prompt, mieux l'IA comprendra votre demande et donnera une réponse pertinente. Au lieu de 'écris un email', essayez 'écris un email professionnel à mon patron résumant nos progrès hebdomadaires'.",
+        "tip_persona_title": "Assignez un rôle",
+        "tip_persona_desc": "Demandez à l'IA d'agir en tant qu'expert dans un certain domaine. Par exemple, 'Agis comme un concepteur-rédacteur senior et donne-moi 5 titres accrocheurs pour une nouvelle marque de café'.",
+        "tip_format_title": "Spécifiez le format",
+        "tip_format_desc": "Dites à l'IA exactement comment vous voulez que la sortie soit formatée. Vous pouvez demander une liste, un tableau, un objet JSON ou un bloc de code.",
+        "tip_iterate_title": "Itérez et affinez",
+        "tip_iterate_desc": "N'hésitez pas à affiner votre demande dans un message de suivi si la première réponse n'est pas parfaite. Vous pouvez dire 'fais plus court', 'utilise un ton plus formel', ou 'ajoute plus de détails sur...'"
+    ]
+    
+    private static let spanishStrings: [String: String] = [
+        "app_name": "OnDeviceAI",
+        "backend": "Motor",
+        "models": "Modelos",
+        "clear": "Limpiar",
+        "chat": "Chat",
+        "history": "Historial",
+        "settings": "Ajustes",
+        "ask_anything": "Pregunta lo que quieras…",
+        "send": "Enviar",
+        "hide": "Ocultar",
+        "appearance": "Apariencia",
+        "behavior": "Comportamiento",
+        "about": "Acerca de",
+        "connect": "Contacto",
+        "language": "Idioma",
+        "theme": "Tema",
+        "system": "Sistema",
+        "light": "Claro",
+        "dark": "Oscuro",
+        "show_keyboard_launch": "Mostrar teclado al iniciar",
+        "follow_twitter": "Seguir @SimonAzoulayFr",
+        "legal": "Legal",
+        "tutorial": "Tutorial",
+        "resources": "Recursos",
+        "personalization": "Personalización",
+        "system_prompt": "Prompt del Sistema",
+        "how_it_works": "Cómo funciona",
+        "usage_tips": "Consejos de uso",
+        "download_models": "Descargar Modelos",
+        "download_more": "Descargar más",
+        "built_in": "Integrado",
+        "switch_model": "Cambiar modelo",
+        "search_models": "Buscar modelos",
+        "filter_multilingual": "Multilingüe",
+        "filter_creative": "Creativo",
+        "filter_reasoning": "Razonamiento",
+        "search_conversations": "Buscar conversaciones…",
+        "clear_history_alert_title": "¿Limpiar historial?",
+        "clear_all_button": "Limpiar todo",
+        "terms_of_use": "Condiciones de uso",
+        "privacy_policy": "Política de privacidad",
+        "licenses": "Licencias",
+        "personalization_desc": "Personaliza cómo responde la IA introduciendo tu propio prompt del sistema a continuación. Este prompt guiará el comportamiento y el tono de la IA durante las conversaciones.",
+        "reset": "Restablecer",
+        "save": "Guardar",
+        "privacy_tagline": "IA privada en el dispositivo. Tus datos permanecen en el iPhone.",
+        
+        "Recommended for you": "Recomendado para ti",
+        "Fast & Light": "Rápidos y Ligeros",
+        "Powerful & Versatile": "Potentes y Versátiles",
+        "Specialized (Code, Vision)": "Especializados (Código, Visión)",
+
+        "howitworks_privacy_title": "100% Privado y en el dispositivo",
+        "howitworks_privacy_desc": "Todo el procesamiento de la IA ocurre directamente en tu iPhone. Tus datos nunca salen de tu dispositivo, garantizando una confidencialidad total.",
+        "howitworks_offline_title": "Funciona sin conexión",
+        "howitworks_offline_desc": "Debido a que los modelos se ejecutan localmente, la aplicación funciona perfectamente sin conexión a Internet. Ideal para viajar o cuando tienes mala conectividad.",
+        "howitworks_performance_title": "Optimizado para Apple Silicon",
+        "howitworks_performance_desc": "Aprovechando la potencia de MLX, la aplicación está diseñada para ser extremadamente rápida y eficiente en Apple Silicon, proporcionando respuestas instantáneas.",
+        "howitworks_models_title": "Elige tu modelo",
+        "howitworks_models_desc": "Puedes descargar diferentes modelos de IA según tus necesidades, desde ultrarrápidos y ligeros hasta potentes y complejos.",
+
+        "tip_context_title": "Proporciona contexto",
+        "tip_context_desc": "Cuanto más contexto proporciones en tu prompt, mejor entenderá la IA tu solicitud y dará una respuesta relevante. En lugar de 'escribe un correo', prueba 'escribe un correo profesional a mi jefe resumiendo nuestro progreso semanal'.",
+        "tip_persona_title": "Asigna un rol",
+        "tip_persona_desc": "Pide a la IA que actúe como un experto en un campo determinado. Por ejemplo, 'Actúa como un redactor publicitario senior y dame 5 titulares atractivos para una nueva marca de café'.",
+        "tip_format_title": "Especifica el formato",
+        "tip_format_desc": "Dile a la IA exactamente cómo quieres que sea el formato de salida. Puedes pedir una lista, una tabla, un objeto JSON o un bloque de código.",
+        "tip_iterate_title": "Itera y refina",
+        "tip_iterate_desc": "No dudes en refinar tu solicitud en un mensaje de seguimiento si la primera respuesta no es perfecta. Puedes decir 'hazlo más corto', 'usa un tono más formal', o 'añade más detalles sobre...'"
+    ]
+    
+    private static let germanStrings: [String: String] = [
+        "app_name": "OnDeviceAI",
+        "backend": "Engine",
+        "models": "Modelle",
+        "clear": "Löschen",
+        "chat": "Chat",
+        "history": "Verlauf",
+        "settings": "Einstellungen",
+        "ask_anything": "Frag mich alles…",
+        "send": "Senden",
+        "hide": "Ausblenden",
+        "appearance": "Erscheinungsbild",
+        "behavior": "Verhalten",
+        "about": "Über",
+        "connect": "Kontakt",
+        "language": "Sprache",
+        "theme": "Design",
+        "system": "System",
+        "light": "Hell",
+        "dark": "Dunkel",
+        "show_keyboard_launch": "Tastatur beim Start anzeigen",
+        "follow_twitter": "@SimonAzoulayFr folgen",
+        "legal": "Rechtliches",
+        "tutorial": "Anleitung",
+        "resources": "Ressourcen",
+        "personalization": "Personalisierung",
+        "system_prompt": "System-Prompt",
+        "how_it_works": "Wie es funktioniert",
+        "usage_tips": "Nutzungstipps",
+        "download_models": "Modelle herunterladen",
+        "download_more": "Mehr herunterladen",
+        "built_in": "Eingebaut",
+        "switch_model": "Modell wechseln",
+        "search_models": "Modelle suchen",
+        "filter_multilingual": "Mehrsprachig",
+        "filter_creative": "Kreativ",
+        "filter_reasoning": "Begründung",
+        "search_conversations": "Gespräche suchen…",
+        "clear_history_alert_title": "Verlauf löschen?",
+        "clear_all_button": "Alles löschen",
+        "terms_of_use": "Nutzungsbedingungen",
+        "privacy_policy": "Datenschutz-Bestimmungen",
+        "licenses": "Lizenzen",
+        "personalization_desc": "Passen Sie an, wie die KI reagiert, indem Sie unten Ihren eigenen System-Prompt eingeben. Dieser Prompt wird das Verhalten und den Ton der KI während der Gespräche leiten.",
+        "reset": "Zurücksetzen",
+        "save": "Speichern",
+        "privacy_tagline": "Private KI auf dem Gerät. Ihre Daten bleiben auf dem iPhone.",
+        
+        "Recommended for you": "Für dich empfohlen",
+        "Fast & Light": "Schnell & Leicht",
+        "Powerful & Versatile": "Leistungsstark & Vielseitig",
+        "Specialized (Code, Vision)": "Spezialisiert (Code, Vision)",
+
+        "howitworks_privacy_title": "100% Privat & auf dem Gerät",
+        "howitworks_privacy_desc": "Die gesamte KI-Verarbeitung findet direkt auf Ihrem iPhone statt. Ihre Daten verlassen niemals Ihr Gerät, was vollständige Vertraulichkeit gewährleistet.",
+        "howitworks_offline_title": "Funktioniert offline",
+        "howitworks_offline_desc": "Da die Modelle lokal ausgeführt werden, funktioniert die App perfekt ohne Internetverbindung. Ideal für Reisen oder bei schlechter Konnektivität.",
+        "howitworks_performance_title": "Optimiert für Apple Silicon",
+        "howitworks_performance_desc": "Die App nutzt die Leistung von MLX und ist darauf ausgelegt, auf Apple Silicon extrem schnell und effizient zu sein und sofortige Antworten zu liefern.",
+        "howitworks_models_title": "Wählen Sie Ihr Modell",
+        "howitworks_models_desc": "Sie können verschiedene KI-Modelle je nach Ihren Bedürfnissen herunterladen, von ultraschnell und leicht bis hin zu leistungsstark und komplex.",
+
+        "tip_context_title": "Geben Sie Kontext an",
+        "tip_context_desc": "Je mehr Kontext Sie in Ihrem Prompt angeben, desto besser wird die KI Ihre Anfrage verstehen und eine relevante Antwort geben. Anstatt 'schreibe eine E-Mail', versuchen Sie 'schreibe eine professionelle E-Mail an meinen Chef, die unseren wöchentlichen Fortschritt zusammenfasst'.",
+        "tip_persona_title": "Weisen Sie eine Rolle zu",
+        "tip_persona_desc": "Bitten Sie die KI, als Experte auf einem bestimmten Gebiet zu agieren. Zum Beispiel: 'Agieren Sie als Senior-Texter und geben Sie mir 5 eingängige Schlagzeilen für eine neue Kaffeemarke'.",
+        "tip_format_title": "Geben Sie das Format an",
+        "tip_format_desc": "Sagen Sie der KI genau, wie die Ausgabe formatiert sein soll. Sie können eine Liste, eine Tabelle, ein JSON-Objekt oder einen Codeblock anfordern.",
+        "tip_iterate_title": "Iterieren und verfeinern",
+        "tip_iterate_desc": "Zögern Sie nicht, Ihre Anfrage in einer Folgemeldung zu verfeinern, wenn die erste Antwort nicht perfekt ist. Sie können sagen 'mach es kürzer', 'verwende einen formelleren Ton' oder 'füge mehr Details hinzu über...'"
+    ]
+}

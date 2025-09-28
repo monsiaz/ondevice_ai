@@ -1,0 +1,44 @@
+name: OnDeviceAI
+options:
+  bundleIdPrefix: fr.simonazoulay
+  groupSortPosition: bottom
+  deploymentTarget:
+    iOS: 18.0
+targets:
+  OnDeviceAI:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources
+        excludes:
+          - "**/AppleFM/**/Info.plist"
+    resources:
+      - "Sources/Resources"
+    dependencies:
+      - package: MLXSwift
+        product: MLX
+      - package: MLXSwift
+        product: MLXNN
+    settings:
+      DEVELOPMENT_TEAM: DAX8GJCJM8
+      CODE_SIGN_STYLE: Automatic
+    info:
+      path: Sources/Info.plist
+      properties:
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+          - UIInterfaceOrientationPortraitUpsideDown
+packages:
+  MLXSwift:
+    url: https://github.com/ml-explore/mlx-swift
+    branch: main
+schemes:
+  OnDeviceAI:
+    build:
+      targets:
+        OnDeviceAI: [run, test, archive]
+    archive:
+      config: Release
