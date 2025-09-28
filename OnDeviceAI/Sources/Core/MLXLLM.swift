@@ -26,8 +26,8 @@ final class MLXLLM: LocalLLM {
         // Demo: Store path reference
         modelPath = modelURL
         
-        // Simulate loading time
-        try? await Task.sleep(nanoseconds: 500_000_000)
+        // Simulate loading time without async
+        Thread.sleep(forTimeInterval: 0.5)
         
         isLoaded = true
         print("✅ [DEMO] Model loaded successfully")
