@@ -263,4 +263,11 @@ struct ChatView: View {
             }
         }
     }
+    
+    private var firstKeyWindow: UIWindow? {
+        return UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap { $0.windows }
+            .first { $0.isKeyWindow }
+    }
 }
