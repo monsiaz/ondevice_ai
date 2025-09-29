@@ -20,10 +20,10 @@ final class SpeechManager: NSObject, ObservableObject {
     override init() {
         // Default to English, then sync with app language setting
         let appLang = UserDefaults.standard.string(forKey: "appLanguage") ?? "en"
-        currentLocale = localeForLanguage(appLang)
-        speechRecognizer = SFSpeechRecognizer(locale: currentLocale)
+        currentLocale = Self.localeForLanguage(appLang)
         
         super.init()
+        speechRecognizer = SFSpeechRecognizer(locale: currentLocale)
         synthesizer.delegate = self
         print("🎤 SpeechManager initialized for locale: \(currentLocale.identifier)")
         
