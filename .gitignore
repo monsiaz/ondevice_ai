@@ -1,76 +1,51 @@
 # Xcode
-*.xcodeproj/project.xcworkspace/xcuserdata/
-*.xcodeproj/xcuserdata/
-*.xcworkspace/xcuserdata/
-UserInterfaceState.xcuserstate
-project.xcworkspace/
-xcuserdata/
+.DS_Store
+*/build/*
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
 
-# Build artifacts
+# Archives - too large for GitHub
+*.xcarchive/
+**/*.xcarchive/
+
+# Large model files
+*.safetensors
+*.bin
+*.onnx
+**/**/model.safetensors
+**/qwen*
+**/llama*
+**/mistral*
+
+# Debug symbols - too large
+**/dSYMs/
+**/DWARF/
+
+# Build products
 build/
-DerivedData/
+Build/
 
 # CocoaPods
 Pods/
 
+# Carthage
+Carthage/
+
 # Swift Package Manager
 .swiftpm/
-Package.resolved
+.build/
 
-# Fastlane
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots/**/*.png
-fastlane/test_output
-
-# Code Injection
-iOSInjectionProject/
-
-# OS Files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
-
-# Temporary files
-*.tmp
-*.swp
-*.swo
-*~
-
-# Logs
-*.log
-
-# Runtime data
-pids
-*.pid
-*.seed
-
-# Personal notes and development artifacts
-notes/
-TODO.md
-NOTES.md
-
-# Large media files (keep captures for demo)
-# *.mov
-# *.mp4
-# *.avi
-
-# Keep essential documentation and demo files
-!README.md
-!docs/
-!Captures/
-
-# GitHub Pages
-_site/
-.sass-cache/
-.jekyll-cache/
-.jekyll-metadata
-OnDeviceAI/OnDeviceAI/Sources/Resources/qwen2.5-0.5b-instruct-4bit/model.safetensors
+# Playground
+*.playground

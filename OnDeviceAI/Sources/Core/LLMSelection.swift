@@ -8,9 +8,16 @@ struct LLMSelection {
 enum LLMSelector {
     @MainActor
     static func select() -> LLMSelection {
-        // Default: Apple FoundationModels for system-level AI (Neural Engine)
-        print("🧠 Default: Apple FoundationModels - Neural Engine powered!")
-        return LLMSelection(llm: AppleFoundationLLM(), backendName: "Neural Engine")
+        // Default: Apple FoundationModels when available. This is the baseline
+        // experience for iOS 26+ devices with Apple Intelligence support.
+        if DeviceInfo.current.supportsAppleIntelligence {
+            print("🧠 Default: Apple FoundationModels - Neural Engine powered!")
+            return LLMSelection(llm: AppleFoundationLLM(), backendName: "Neural Engine")
+        }
+        // Devices without Apple Intelligence will still start on Apple FM UI,
+        // but the first generation will prompt to download a tiny local model.
+        print("ℹ️ Apple Intelligence not available on this device; MLX will be offered via downloads.")
+        return LLMSelection(llm: MLXLLM(), backendName: "MLX")
     }
     
     @MainActor

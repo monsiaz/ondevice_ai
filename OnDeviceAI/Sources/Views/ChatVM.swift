@@ -38,24 +38,35 @@ final class ChatVM: ObservableObject {
         self.modelLoadingStatus = "Initializing AI system..."
 
         Task {
-            // Check for downloaded models first
+            // If device supports Apple Intelligence, default to Apple FM (no download)
+            if DeviceInfo.current.supportsAppleIntelligence {
+                await MainActor.run {
+                    self.modelLoadingStatus = ""
+                    self.currentModel = "Apple Intelligence"
+                    self.backendName = "Neural Engine"
+                    print("✅ Using Apple FoundationModels as default")
+                }
+                return
+            }
+
+            // Otherwise, if user already has models installed, load the first one
             let installed = ModelManager.shared.listInstalled()
             if let first = installed.first {
-                await MainActor.run { 
+                await MainActor.run {
                     self.modelLoadingStatus = "Loading \(first.displayName)..."
-                    // Switch to MLX for downloaded models
                     self.switchToBackend(for: first.displayName)
                     self.load(modelURL: ModelManager.shared.url(for: first))
                 }
                 return
             }
-            
-            // Use Apple FoundationModels as default (already initialized)
+
+            // No Apple Intelligence and no local model → UI stays ready; we'll auto-download
+            // a tiny free model on first generation request.
             await MainActor.run {
                 self.modelLoadingStatus = ""
-                self.currentModel = "Apple Intelligence"
-                self.backendName = "Neural Engine"
-                print("✅ Using Apple FoundationModels as default")
+                self.currentModel = "Local model (to download)"
+                self.backendName = "MLX"
+                print("ℹ️ No Apple Intelligence on this device. A tiny local model will be downloaded on first use.")
             }
         }
     }
@@ -214,9 +225,10 @@ final class ChatVM: ObservableObject {
             DebugLog.shared.log("Loading first installed model: \(first.displayName)")
             load(modelURL: ModelManager.shared.url(for: first))
         } else {
-            DebugLog.shared.log("No models installed, showing error message")
-            messages.append(ChatBubble(role: .assistant, text: "No local model installed. Open Models and download Qwen 2.5 0.5B 4-bit."))
-            queuedPrompt = nil
+            DebugLog.shared.log("No models installed, auto-installing default tiny model")
+            // Auto-bootstrap a tiny, free model so generation works on devices
+            // without Apple Intelligence support (e.g., iPhone 13 mini).
+            Task { await self.installAndLoadDefaultTinyModel() }
         }
     }
 
