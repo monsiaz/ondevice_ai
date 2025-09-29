@@ -113,38 +113,17 @@ struct ChatView: View {
                         .contentShape(Rectangle())
                 }
 
-                // Voice dictation toggle
-                Button(action: { speech.toggleDictation() }) {
-                    Image(systemName: speech.isDictating ? "mic.fill" : "mic")
-                        .font(.title2)
-                        .frame(width: 44, height: 44)
-                        .contentShape(Rectangle())
-                }
-
-                // Speak last assistant reply
-                Button(action: {
-                    if let lastAssistant = vm.messages.last(where: { $0.role == .assistant })?.text {
-                        speech.speak(lastAssistant)
-                    }
-                }) {
-                    Image(systemName: speech.isSpeaking ? "speaker.wave.2.fill" : "speaker.wave.2")
-                        .font(.title2)
-                        .frame(width: 44, height: 44)
-                        .contentShape(Rectangle())
-                }
-
                 Button(action: { 
-                    // Sauvegarder dans l'historique avant de vider
                     HistoryStore.shared.upsertCurrent(from: vm)
                     vm.clear(); hideKeyboard() 
                 }) {
-                    Image(systemName: "trash")
+                    Image(systemName: "arrow.counterclockwise")
                         .font(.title2)
                         .frame(width: 44, height: 44)
                         .contentShape(Rectangle())
                 }
-                .accessibilityLabel("Clear Conversation")
-                .accessibilityHint("Clear current chat and start fresh")
+                .accessibilityLabel("New Conversation")
+                .accessibilityHint("Save current chat and start a new conversation")
             }
         }
         .buttonStyle(.plain)
