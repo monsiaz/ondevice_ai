@@ -116,13 +116,13 @@ struct ChatView: View {
                     HistoryStore.shared.upsertCurrent(from: vm)
                     vm.clear(); hideKeyboard() 
                 }) {
-                    Image(systemName: "trash")
+                    Image(systemName: "arrow.counterclockwise")
                         .font(.title2)
                         .frame(width: 44, height: 44)
                         .contentShape(Rectangle())
                 }
-                .accessibilityLabel("Clear Conversation")
-                .accessibilityHint("Clear current chat and start fresh")
+                .accessibilityLabel("New Conversation")
+                .accessibilityHint("Save current chat and start a new conversation")
             }
         }
         .buttonStyle(.plain)
