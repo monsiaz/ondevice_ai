@@ -201,25 +201,30 @@ struct ChatView: View {
     }
     
     private var inputBar: some View {
-        AnimatedInputBar(
-            input: $vm.input,
-            isGenerating: $vm.isGenerating,
-            inputFocused: $inputFocused,
-            onSend: {
-                vm.send()
-                hideKeyboard()
-            }
-        )
-        .padding(.top, 8)
-        .padding(.bottom, (firstKeyWindow?.safeAreaInsets.bottom ?? 0) == 0 ? 8 : 0)
-        .background(
-            GeometryReader { proxy in
-                Color.clear
-                    .onAppear { inputBarHeight = proxy.size.height }
-                    .onChange(of: proxy.size.height) { _, newValue in inputBarHeight = newValue }
-            }
-            .background(.regularMaterial)
-        )
+        VStack(spacing: 0) {
+            AnimatedInputBar(
+                input: $vm.input,
+                isGenerating: $vm.isGenerating,
+                inputFocused: $inputFocused,
+                onSend: {
+                    vm.send()
+                    hideKeyboard()
+                }
+            )
+            .padding(.top, 8)
+            .background(
+                GeometryReader { proxy in
+                    Color.clear
+                        .onAppear { inputBarHeight = proxy.size.height }
+                        .onChange(of: proxy.size.height) { _, newValue in inputBarHeight = newValue }
+                }
+            )
+            
+            // Spacer to fill safe area with background
+            Color.clear
+                .frame(height: firstKeyWindow?.safeAreaInsets.bottom ?? 0)
+        }
+        .background(.regularMaterial)
     }
 
     private func hideKeyboard() {
