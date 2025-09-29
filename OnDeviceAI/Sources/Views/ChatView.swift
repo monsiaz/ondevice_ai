@@ -22,15 +22,17 @@ struct ChatView: View {
             VStack(spacing: 0) {
                 header
                 messageArea
+                Spacer(minLength: 0)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             
-            inputBar
-                .padding(.bottom, keyboard.height > 0 ? keyboard.height - (firstKeyWindow?.safeAreaInsets.bottom ?? 0) : 0)
-                .animation(.interactiveSpring(response: 0.35, dampingFraction: 0.86, blendDuration: 0.25), value: keyboard.height)
+            VStack(spacing: 0) {
+                inputBar
+            }
+            .background(.thinMaterial)
+            .ignoresSafeArea(.keyboard, edges: .bottom)
         }
-        .background(.thinMaterial) // Appliquer le fond ici
-        .ignoresSafeArea(.keyboard, edges: .bottom)
+        .background(.thinMaterial)
         .onAppear {
             if showKeyboardOnLaunch {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -210,6 +212,9 @@ struct ChatView: View {
                 hideKeyboard()
             }
         )
+        .padding(.horizontal, 12)
+        .padding(.top, 12)
+        .padding(.bottom, 12)
         .background(
             GeometryReader { proxy in
                 Color.clear
@@ -217,10 +222,6 @@ struct ChatView: View {
                     .onChange(of: proxy.size.height) { _, newValue in inputBarHeight = newValue }
             }
         )
-        .padding(.horizontal, 12)
-        .padding(.top, 8)
-        .padding(.bottom, (firstKeyWindow?.safeAreaInsets.bottom ?? 0) + 8)
-        .background(.thinMaterial)
     }
 
     private func hideKeyboard() {

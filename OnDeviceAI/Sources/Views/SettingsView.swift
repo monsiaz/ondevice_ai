@@ -212,8 +212,13 @@ struct LegalTextView: View {
         .background(.regularMaterial.opacity(0.3))
     }
     private func loadText() -> String {
-        if let url = Bundle.main.url(forResource: filename.replacingOccurrences(of: ".txt", with: ""), withExtension: "txt"),
-           let s = try? String(contentsOf: url, encoding: .utf8) { return s }
+        if let url = Bundle.main.url(forResource: filename.replacingOccurrences(of: ".txt", with: ""), withExtension: "txt") {
+            do {
+                return try String(contentsOf: url, encoding: .utf8)
+            } catch {
+                return "Error loading content: \(error.localizedDescription)"
+            }
+        }
         return "Coming soon."
     }
 }
@@ -224,7 +229,12 @@ struct TutorialView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 Text("How to use OnDeviceAI").font(.title2.bold())
-                Text((try? String(contentsOf: Bundle.main.url(forResource: "Tutorial", withExtension: "txt")!)) ?? "")
+                if let url = Bundle.main.url(forResource: "Tutorial", withExtension: "txt"),
+                   let content = try? String(contentsOf: url, encoding: .utf8) {
+                    Text(content)
+                } else {
+                    Text("Tutorial content not available")
+                }
             }
             .padding()
         }

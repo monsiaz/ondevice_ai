@@ -13,13 +13,57 @@ final class SpeechManager: NSObject, ObservableObject {
     private let audioEngine = AVAudioEngine()
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
-    private let speechRecognizer = SFSpeechRecognizer()
+    private var speechRecognizer: SFSpeechRecognizer?
     private let synthesizer = AVSpeechSynthesizer()
+    private var currentLocale: Locale
 
     override init() {
+        // Default to English, then sync with app language setting
+        let appLang = UserDefaults.standard.string(forKey: "appLanguage") ?? "en"
+        currentLocale = localeForLanguage(appLang)
+        speechRecognizer = SFSpeechRecognizer(locale: currentLocale)
+        
         super.init()
         synthesizer.delegate = self
-        print("🎤 SpeechManager initialized")
+        print("🎤 SpeechManager initialized for locale: \(currentLocale.identifier)")
+        
+        // Listen for language changes
+        NotificationCenter.default.addObserver(
+            forName: UserDefaults.didChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.updateLanguage()
+        }
+    }
+    
+    private func updateLanguage() {
+        let appLang = UserDefaults.standard.string(forKey: "appLanguage") ?? "en"
+        let newLocale = Self.localeForLanguage(appLang)
+        
+        if newLocale.identifier != currentLocale.identifier {
+            currentLocale = newLocale
+            speechRecognizer = SFSpeechRecognizer(locale: currentLocale)
+            print("🔄 Speech language updated to: \(currentLocale.identifier)")
+        }
+    }
+    
+    private static func localeForLanguage(_ lang: String) -> Locale {
+        switch lang {
+        case "fr": return Locale(identifier: "fr-FR")
+        case "es": return Locale(identifier: "es-ES")
+        case "de": return Locale(identifier: "de-DE")
+        case "it": return Locale(identifier: "it-IT")
+        case "pt": return Locale(identifier: "pt-PT")
+        case "nl": return Locale(identifier: "nl-NL")
+        case "pl": return Locale(identifier: "pl-PL")
+        case "ru": return Locale(identifier: "ru-RU")
+        case "zh": return Locale(identifier: "zh-CN")
+        case "ja": return Locale(identifier: "ja-JP")
+        case "ko": return Locale(identifier: "ko-KR")
+        case "ar": return Locale(identifier: "ar-SA")
+        default: return Locale(identifier: "en-US") // Default English
+        }
     }
 
     func requestAuthorization() async {
@@ -141,7 +185,7 @@ final class SpeechManager: NSObject, ObservableObject {
         guard !text.isEmpty else { return }
         stopSpeaking()
         let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = AVSpeechSynthesisVoice(language: Locale.current.identifier)
+        utterance.voice = AVSpeechSynthesisVoice(language: currentLocale.identifier)
         utterance.rate = AVSpeechUtteranceDefaultSpeechRate
         synthesizer.speak(utterance)
         isSpeaking = true
@@ -149,6 +193,8 @@ final class SpeechManager: NSObject, ObservableObject {
         // Haptic feedback
         let impact = UIImpactFeedbackGenerator(style: .light)
         impact.impactOccurred()
+        
+        print("🔊 Speaking in \(currentLocale.identifier)")
     }
 
     func stopSpeaking() {

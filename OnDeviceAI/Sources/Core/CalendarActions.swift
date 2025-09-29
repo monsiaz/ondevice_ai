@@ -5,25 +5,37 @@ import UIKit
 enum CalendarActions {
     static func addEvent(with text: String) {
         let store = EKEventStore()
-        store.requestAccess(to: .event) { granted, _ in
-            guard granted else { return }
-            let event = EKEvent(eventStore: store)
-            event.title = text.components(separatedBy: "\n").first ?? "OnDeviceAI Event"
-            event.startDate = Date().addingTimeInterval(3600)
-            event.endDate = event.startDate.addingTimeInterval(3600)
-            event.calendar = store.defaultCalendarForNewEvents
-            do { try store.save(event, span: .thisEvent, commit: true) } catch {}
+        if #available(iOS 17.0, *) {
+            Task {
+                do {
+                    try await store.requestFullAccessToEvents()
+                    let event = EKEvent(eventStore: store)
+                    event.title = text.components(separatedBy: "\n").first ?? "OnDeviceAI Event"
+                    event.startDate = Date().addingTimeInterval(3600)
+                    event.endDate = event.startDate.addingTimeInterval(3600)
+                    event.calendar = store.defaultCalendarForNewEvents
+                    try store.save(event, span: .thisEvent, commit: true)
+                } catch {
+                    print("Calendar access error: \(error)")
+                }
+            }
         }
     }
 
     static func addReminder(with text: String) {
         let store = EKEventStore()
-        store.requestAccess(to: .reminder) { granted, _ in
-            guard granted else { return }
-            let reminder = EKReminder(eventStore: store)
-            reminder.title = text.components(separatedBy: "\n").first ?? "OnDeviceAI Reminder"
-            reminder.calendar = store.defaultCalendarForNewReminders()
-            do { try store.save(reminder, commit: true) } catch {}
+        if #available(iOS 17.0, *) {
+            Task {
+                do {
+                    try await store.requestFullAccessToReminders()
+                    let reminder = EKReminder(eventStore: store)
+                    reminder.title = text.components(separatedBy: "\n").first ?? "OnDeviceAI Reminder"
+                    reminder.calendar = store.defaultCalendarForNewReminders()
+                    try store.save(reminder, commit: true)
+                } catch {
+                    print("Reminder access error: \(error)")
+                }
+            }
         }
     }
 
