@@ -3,6 +3,7 @@ import AVFoundation
 import Speech
 import UIKit
 
+@MainActor
 final class SpeechManager: NSObject, ObservableObject {
     private let speechQueue = DispatchQueue(label: "com.ondeviceai.speech", qos: .userInitiated)
     @Published var isDictating: Bool = false
@@ -18,6 +19,7 @@ final class SpeechManager: NSObject, ObservableObject {
     override init() {
         super.init()
         synthesizer.delegate = self
+        print("🎤 SpeechManager initialized")
     }
 
     func requestAuthorization() async {
@@ -32,14 +34,15 @@ final class SpeechManager: NSObject, ObservableObject {
         }
     }
 
-    @MainActor
     func toggleDictation() {
         isDictating ? stopDictation() : startDictation()
     }
 
-    @MainActor
     func startDictation() {
-        guard !audioEngine.isRunning else { return }
+        guard !audioEngine.isRunning else { 
+            print("⚠️ Audio engine already running")
+            return 
+        }
         
         // Haptic feedback
         let impact = UIImpactFeedbackGenerator(style: .medium)
@@ -118,7 +121,6 @@ final class SpeechManager: NSObject, ObservableObject {
         print("🎤 Dictation started")
     }
 
-    @MainActor
     func stopDictation() {
         if audioEngine.isRunning {
             audioEngine.stop()
@@ -135,7 +137,6 @@ final class SpeechManager: NSObject, ObservableObject {
         impact.impactOccurred()
     }
 
-    @MainActor
     func speak(_ text: String) {
         guard !text.isEmpty else { return }
         stopSpeaking()
@@ -150,7 +151,6 @@ final class SpeechManager: NSObject, ObservableObject {
         impact.impactOccurred()
     }
 
-    @MainActor
     func stopSpeaking() {
         if synthesizer.isSpeaking { synthesizer.stopSpeaking(at: .immediate) }
         isSpeaking = false
