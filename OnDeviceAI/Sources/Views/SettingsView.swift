@@ -53,6 +53,8 @@ struct SettingsView: View {
             
             Section(LocalizedString.get("behavior", language: currentLanguage)) {
                 Toggle(LocalizedString.get("show_keyboard_launch", language: currentLanguage), isOn: $showKeyboardOnLaunch)
+                Toggle("Enable microphone (dictation)", isOn: .init(get: { UserDefaults.standard.bool(forKey: "enableMic") }, set: { UserDefaults.standard.set($0, forKey: "enableMic") }))
+                Toggle("Enable text-to-speech", isOn: .init(get: { UserDefaults.standard.bool(forKey: "enableTTS") }, set: { UserDefaults.standard.set($0, forKey: "enableTTS") }))
             }
 
             Section(LocalizedString.get("models", language: currentLanguage)) {

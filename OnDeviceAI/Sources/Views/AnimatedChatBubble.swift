@@ -2,6 +2,9 @@ import SwiftUI
 
 struct AnimatedChatBubble: View {
     let message: ChatBubble
+    @State private var showTTS = true
+    @AppStorage("enableTTS") private var enableTTS: Bool = true
+    @EnvironmentObject var speech: SpeechManager
     @State private var isVisible = false
     @State private var shimmer = false
     @Environment(\.accessibilityReduceMotion) var reduceMotion
@@ -10,7 +13,23 @@ struct AnimatedChatBubble: View {
         HStack {
             if message.role == .assistant { Spacer(minLength: 40) }
             
-            Text(message.text)
+            VStack(alignment: .leading, spacing: 8) {
+                Text(message.text)
+                    .contextMenu {
+                        Button("Add to Calendar") { NotificationCenter.default.post(name: Notification.Name("Action.AddToCalendar"), object: message.text) }
+                        Button("Create Reminder") { NotificationCenter.default.post(name: Notification.Name("Action.CreateReminder"), object: message.text) }
+                        Button("Save to Notes") { NotificationCenter.default.post(name: Notification.Name("Action.SaveToNotes"), object: message.text) }
+                    }
+                if message.role == .assistant && enableTTS {
+                    Button(action: { speech.speak(message.text) }) {
+                        Label("Listen", systemImage: speech.isSpeaking ? "speaker.wave.2.fill" : "speaker.wave.2")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.top, 2)
+                }
+            }
                 .padding(16)
                 .background(
                     RoundedRectangle(cornerRadius: 18)
@@ -73,6 +92,8 @@ struct AnimatedInputBar: View {
     @Binding var isGenerating: Bool
     @FocusState.Binding var inputFocused: Bool
     let onSend: () -> Void
+    @StateObject private var speech = SpeechManager()
+    @AppStorage("enableMic") private var enableMic: Bool = true
     
     var body: some View {
         HStack(spacing: 10) {
@@ -90,6 +111,19 @@ struct AnimatedInputBar: View {
             .frame(minHeight: 44) // Hauteur minimum standard
             .frame(maxHeight: input.count > 200 ? 100 : 44) // Hauteur adaptative
 
+            if enableMic {
+                Button(action: {
+                    if speech.isDictating { speech.stopDictation() } else { Task { await speech.requestAuthorization(); speech.startDictation(); inputFocused = true } }
+                }) {
+                    Image(systemName: speech.isDictating ? "mic.fill" : "mic")
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+                        .frame(width: 28, height: 28)
+                        .padding(10)
+                }
+                .accessibilityLabel("Dictate")
+            }
+
             Button(action: handleSend) {
                 Image(systemName: "arrow.up")
                     .font(.headline)
@@ -105,6 +139,11 @@ struct AnimatedInputBar: View {
         .background(.ultraThinMaterial)
         .clipShape(Capsule())
         .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 2)
+        .environmentObject(speech)
+        .onChange(of: speech.transcript) { _, newValue in
+            // Live transcription into input
+            if !newValue.isEmpty { input = newValue }
+        }
     }
     
     private func handleSend() {
