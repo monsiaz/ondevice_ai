@@ -236,9 +236,10 @@ struct ChatView: View {
 
     private func scrollToBottom(proxy: ScrollViewProxy) {
         guard let lastId = vm.messages.last?.id else { return }
-        DispatchQueue.main.async {
-            withAnimation(.spring()) {
-                proxy.scrollTo(lastId, anchor: .bottom)
+        // Delay to ensure bubble is fully rendered
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            withAnimation(.easeOut(duration: 0.4)) {
+                proxy.scrollTo(lastId, anchor: .top)
             }
         }
     }
