@@ -100,7 +100,7 @@ struct AnimatedInputBar: View {
     @Binding var isGenerating: Bool
     @FocusState.Binding var inputFocused: Bool
     let onSend: () -> Void
-    @StateObject private var speech = SpeechManager()
+    @StateObject private var speechManager = SpeechManager()
     @AppStorage("enableMic") private var enableMic: Bool = true
     
     var body: some View {
@@ -115,21 +115,31 @@ struct AnimatedInputBar: View {
             .padding(.vertical, 10)
             .focused($inputFocused)
             .onSubmit(handleSend)
-            .lineLimit(input.count > 200 ? 4 : 1) // S'agrandit seulement pour très long texte
-            .frame(minHeight: 44) // Hauteur minimum standard
-            .frame(maxHeight: input.count > 200 ? 100 : 44) // Hauteur adaptative
+            .lineLimit(input.count > 200 ? 4 : 1)
+            .frame(minHeight: 44)
+            .frame(maxHeight: input.count > 200 ? 100 : 44)
 
             if enableMic {
                 Button(action: {
-                    if speech.isDictating { speech.stopDictation() } else { Task { await speech.requestAuthorization(); speech.startDictation(); inputFocused = true } }
+                    if speechManager.isDictating {
+                        speechManager.stopDictation()
+                    } else {
+                        Task {
+                            await speechManager.requestAuthorization()
+                            await MainActor.run {
+                                speechManager.startDictation()
+                            }
+                        }
+                    }
                 }) {
-                    Image(systemName: speech.isDictating ? "mic.fill" : "mic")
+                    Image(systemName: speechManager.isDictating ? "mic.fill" : "mic")
                         .font(.headline)
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(speechManager.isDictating ? .red : .primary)
                         .frame(width: 28, height: 28)
                         .padding(10)
+                        .symbolEffect(.pulse, isActive: speechManager.isDictating)
                 }
-                .accessibilityLabel("Dictate")
+                .accessibilityLabel(speechManager.isDictating ? "Stop dictation" : "Start dictation")
             }
 
             Button(action: handleSend) {
@@ -147,10 +157,15 @@ struct AnimatedInputBar: View {
         .background(.ultraThinMaterial)
         .clipShape(Capsule())
         .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 2)
-        .environmentObject(speech)
-        .onChange(of: speech.transcript) { _, newValue in
-            // Live transcription into input
-            if !newValue.isEmpty { input = newValue }
+        .onChange(of: speechManager.transcript) { oldValue, newValue in
+            if !newValue.isEmpty && newValue != oldValue {
+                input = newValue
+            }
+        }
+        .onAppear {
+            Task {
+                await speechManager.requestAuthorization()
+            }
         }
     }
     

@@ -3,7 +3,6 @@ import UIKit
 
 struct ChatView: View {
     @ObservedObject var vm: ChatVM
-    @StateObject private var speech = SpeechManager()
     @State private var showModels = false
     @State private var showModelSelector = false
     @FocusState private var inputFocused: Bool
@@ -33,7 +32,6 @@ struct ChatView: View {
         .background(.thinMaterial) // Appliquer le fond ici
         .ignoresSafeArea(.keyboard, edges: .bottom)
         .onAppear {
-            Task { await speech.requestAuthorization() }
             if showKeyboardOnLaunch {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     inputFocused = true
@@ -108,26 +106,6 @@ struct ChatView: View {
             HStack {
                 NavigationLink(destination: SettingsView()) {
                     Image(systemName: "gearshape")
-                        .font(.title2)
-                        .frame(width: 44, height: 44)
-                        .contentShape(Rectangle())
-                }
-
-                // Voice dictation toggle
-                Button(action: { speech.toggleDictation() }) {
-                    Image(systemName: speech.isDictating ? "mic.fill" : "mic")
-                        .font(.title2)
-                        .frame(width: 44, height: 44)
-                        .contentShape(Rectangle())
-                }
-
-                // Speak last assistant reply
-                Button(action: {
-                    if let lastAssistant = vm.messages.last(where: { $0.role == .assistant })?.text {
-                        speech.speak(lastAssistant)
-                    }
-                }) {
-                    Image(systemName: speech.isSpeaking ? "speaker.wave.2.fill" : "speaker.wave.2")
                         .font(.title2)
                         .frame(width: 44, height: 44)
                         .contentShape(Rectangle())

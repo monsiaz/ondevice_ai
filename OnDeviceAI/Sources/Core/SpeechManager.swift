@@ -40,52 +40,82 @@ final class SpeechManager: NSObject, ObservableObject {
     @MainActor
     func startDictation() {
         guard !audioEngine.isRunning else { return }
-        transcript = ""
         
         // Haptic feedback
         let impact = UIImpactFeedbackGenerator(style: .medium)
         impact.impactOccurred()
-
-        let audioSession = AVAudioSession.sharedInstance()
-        try? audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
-        try? audioSession.setActive(true, options: .notifyOthersOnDeactivation)
         
         guard speechRecognizer?.isAvailable == true else {
-            print("Speech recognition not available")
+            print("❌ Speech recognition not available")
+            return
+        }
+        
+        // Reset transcript
+        transcript = ""
+
+        // Configure audio session for recording
+        let audioSession = AVAudioSession.sharedInstance()
+        do {
+            try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
+            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+        } catch {
+            print("❌ Audio session error: \(error)")
             return
         }
 
+        // Create recognition request
         recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        guard let recognitionRequest else { return }
+        guard let recognitionRequest else { 
+            print("❌ Unable to create recognition request")
+            return 
+        }
         recognitionRequest.shouldReportPartialResults = true
+        recognitionRequest.requiresOnDeviceRecognition = true // Force on-device for privacy
 
+        // Setup audio tap
         let inputNode = audioEngine.inputNode
         let recordingFormat = inputNode.outputFormat(forBus: 0)
-        inputNode.removeTap(onBus: 0)
+        inputNode.removeTap(onBus: 0) // Clean any existing tap
         inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [weak self] buffer, _ in
             self?.recognitionRequest?.append(buffer)
         }
 
+        // Start audio engine
         audioEngine.prepare()
-        try? audioEngine.start()
+        do {
+            try audioEngine.start()
+        } catch {
+            print("❌ Audio engine error: \(error)")
+            return
+        }
 
+        // Start recognition task
         recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest) { [weak self] result, error in
             guard let self else { return }
-            self.speechQueue.async {
-                if let result = result {
-                    Task { @MainActor in
-                        self.transcript = result.bestTranscription.formattedString
-                    }
+            
+            if let result = result {
+                let transcribedText = result.bestTranscription.formattedString
+                Task { @MainActor in
+                    self.transcript = transcribedText
+                    print("🎤 Transcription: \(transcribedText)")
                 }
-                if error != nil || (result?.isFinal ?? false) {
-                    Task { @MainActor in
-                        self.stopDictation()
-                    }
+            }
+            
+            if let error = error {
+                print("❌ Recognition error: \(error.localizedDescription)")
+                Task { @MainActor in
+                    self.stopDictation()
+                }
+            } else if result?.isFinal == true {
+                print("✅ Recognition final")
+                Task { @MainActor in
+                    self.stopDictation()
                 }
             }
         }
 
         isDictating = true
+        print("🎤 Dictation started")
     }
 
     @MainActor
