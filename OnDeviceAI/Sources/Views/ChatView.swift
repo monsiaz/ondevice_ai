@@ -3,6 +3,7 @@ import UIKit
 
 struct ChatView: View {
     @ObservedObject var vm: ChatVM
+    @StateObject private var speech = SpeechManager()
     @State private var showModels = false
     @State private var showModelSelector = false
     @FocusState private var inputFocused: Bool
@@ -29,9 +30,10 @@ struct ChatView: View {
                 .padding(.bottom, keyboard.height > 0 ? keyboard.height - (firstKeyWindow?.safeAreaInsets.bottom ?? 0) : 0)
                 .animation(.interactiveSpring(response: 0.35, dampingFraction: 0.86, blendDuration: 0.25), value: keyboard.height)
         }
-        .background(.thinMaterial)
+        .background(.thinMaterial) // Appliquer le fond ici
         .ignoresSafeArea(.keyboard, edges: .bottom)
         .onAppear {
+            Task { await speech.requestAuthorization() }
             if showKeyboardOnLaunch {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     inputFocused = true
@@ -111,17 +113,38 @@ struct ChatView: View {
                         .contentShape(Rectangle())
                 }
 
-                Button(action: { 
-                    HistoryStore.shared.upsertCurrent(from: vm)
-                    vm.clear(); hideKeyboard() 
-                }) {
-                    Image(systemName: "arrow.counterclockwise")
+                // Voice dictation toggle
+                Button(action: { speech.toggleDictation() }) {
+                    Image(systemName: speech.isDictating ? "mic.fill" : "mic")
                         .font(.title2)
                         .frame(width: 44, height: 44)
                         .contentShape(Rectangle())
                 }
-                .accessibilityLabel("New Conversation")
-                .accessibilityHint("Save current chat and start a new conversation")
+
+                // Speak last assistant reply
+                Button(action: {
+                    if let lastAssistant = vm.messages.last(where: { $0.role == .assistant })?.text {
+                        speech.speak(lastAssistant)
+                    }
+                }) {
+                    Image(systemName: speech.isSpeaking ? "speaker.wave.2.fill" : "speaker.wave.2")
+                        .font(.title2)
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
+                }
+
+                Button(action: { 
+                    // Sauvegarder dans l'historique avant de vider
+                    HistoryStore.shared.upsertCurrent(from: vm)
+                    vm.clear(); hideKeyboard() 
+                }) {
+                    Image(systemName: "trash")
+                        .font(.title2)
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
+                }
+                .accessibilityLabel("Clear Conversation")
+                .accessibilityHint("Clear current chat and start fresh")
             }
         }
         .buttonStyle(.plain)
@@ -149,7 +172,7 @@ struct ChatView: View {
                                 vm.send()
                                 DebugLog.shared.log("Called vm.send()")
                             }
-                            .disabled(!vm.modelLoadingStatus.isEmpty)
+                            .disabled(!vm.modelLoadingStatus.isEmpty) // Désactiver pendant le chargement
                             
                             if !vm.modelLoadingStatus.isEmpty {
                                 VStack(spacing: 8) {
@@ -187,10 +210,13 @@ struct ChatView: View {
             .onChange(of: vm.messages.count) { _, _ in scrollToBottom(proxy: proxy) }
             .onAppear { scrollToBottom(proxy: proxy) }
             .onReceive(NotificationCenter.default.publisher(for: Notification.Name("ChatVM.didAppendToken"))) { _ in
+                // Auto-follow the growing last bubble
                 scrollToBottom(proxy: proxy)
             }
             .onReceive(NotificationCenter.default.publisher(for: Notification.Name("ChatVM.didClear"))) { _ in
+                // Scroll to top so suggested prompts are fully visible
                 withAnimation(.spring()) {
+                    // No id to scroll to; rely on content top and extra bottom padding
                 }
             }
         }
@@ -222,6 +248,13 @@ struct ChatView: View {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 
+    // MARK: - Dictation (basic stub; on-device APIs wired by Speech framework)
+    private func startDictation() {
+        // For brevity, we rely on the system dictation shortcut (keyboard mic).
+        // A full Speech framework pipeline can be added in a dedicated ViewModel.
+        inputFocused = true
+    }
+
     private func scrollToBottom(proxy: ScrollViewProxy) {
         guard let lastId = vm.messages.last?.id else { return }
         DispatchQueue.main.async {
@@ -230,12 +263,4 @@ struct ChatView: View {
             }
         }
     }
-}
-
-// MARK: - Window helper for safeArea (iOS 15+)
-private var firstKeyWindow: UIWindow? {
-    return UIApplication.shared.connectedScenes
-        .compactMap { $0 as? UIWindowScene }
-        .flatMap { $0.windows }
-        .first { $0.isKeyWindow }
 }
