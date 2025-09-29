@@ -240,8 +240,9 @@ struct ChatView: View {
 
     private func scrollToBottom(proxy: ScrollViewProxy) {
         guard let lastId = vm.messages.last?.id else { return }
-        DispatchQueue.main.async {
-            withAnimation(.spring()) {
+        // Use asyncAfter to ensure layout is complete
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            withAnimation(.easeOut(duration: 0.3)) {
                 proxy.scrollTo(lastId, anchor: .bottom)
             }
         }
