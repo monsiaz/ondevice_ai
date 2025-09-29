@@ -3,7 +3,7 @@ import Foundation
 import FoundationModels
 
 @available(iOS 26.0, *)
-@MainActor  
+@MainActor
 final class AppleFoundationLLM: LocalLLM {
     private var session: LanguageModelSession?
     private var currentTask: Task<Void, Never>?

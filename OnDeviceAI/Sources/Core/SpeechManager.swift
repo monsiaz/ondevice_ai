@@ -19,8 +19,11 @@ final class SpeechManager: NSObject, ObservableObject {
     }
 
     func requestAuthorization() async {
-        let _ = await SFSpeechRecognizer.requestAuthorization()
-        AVAudioApplication.requestRecordPermission { _ in }
+        await withCheckedContinuation { (cont: CheckedContinuation<Void, Never>) in
+            SFSpeechRecognizer.requestAuthorization { _ in cont.resume() }
+        }
+        let session = AVAudioSession.sharedInstance()
+        session.requestRecordPermission { _ in }
     }
 
     func toggleDictation() {
