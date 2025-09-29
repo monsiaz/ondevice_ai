@@ -56,21 +56,6 @@ final class HistoryStore: ObservableObject {
         let data = try? JSONEncoder().encode(conversations)
         if let data { 
             try? data.write(to: url)
-            checkAndPurgeIfNeeded()
-        }
-    }
-    
-    private func checkAndPurgeIfNeeded() {
-        // Check if history file exceeds 50MB and purge oldest entries
-        guard let attrs = try? FileManager.default.attributesOfItem(atPath: url.path),
-              let fileSize = attrs[.size] as? UInt64 else { return }
-        
-        let maxBytes: UInt64 = 50 * 1024 * 1024 // 50MB
-        if fileSize > maxBytes {
-            print("⚠️ History exceeds 50MB (\(fileSize / 1024 / 1024)MB), purging oldest conversations...")
-            // Keep only the newest 5 conversations
-            conversations = Array(conversations.prefix(5))
-            save()
         }
     }
 
