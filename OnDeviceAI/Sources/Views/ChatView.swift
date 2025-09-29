@@ -180,7 +180,7 @@ struct ChatView: View {
                         }
                     }
                 }
-                .padding(.bottom, keyboard.height > 0 ? keyboard.height + 24 : inputBarHeight + 32)
+                .padding(.bottom, inputBarHeight + 80)
             }
             .scrollDismissesKeyboard(.interactively)
             .scrollIndicators(.hidden)
@@ -201,25 +201,29 @@ struct ChatView: View {
     }
     
     private var inputBar: some View {
-        AnimatedInputBar(
-            input: $vm.input,
-            isGenerating: $vm.isGenerating,
-            inputFocused: $inputFocused,
-            onSend: {
-                vm.send()
-                hideKeyboard()
-            }
-        )
-        .padding(.horizontal, 12)
-        .padding(.top, 12)
-        .padding(.bottom, 12)
-        .background(
-            GeometryReader { proxy in
-                Color.clear
-                    .onAppear { inputBarHeight = proxy.size.height }
-                    .onChange(of: proxy.size.height) { _, newValue in inputBarHeight = newValue }
-            }
-        )
+        VStack(spacing: 0) {
+            AnimatedInputBar(
+                input: $vm.input,
+                isGenerating: $vm.isGenerating,
+                inputFocused: $inputFocused,
+                onSend: {
+                    vm.send()
+                    hideKeyboard()
+                }
+            )
+            .padding(.horizontal, 12)
+            .padding(.top, 12)
+            .padding(.bottom, 8)
+            .background(
+                GeometryReader { proxy in
+                    Color.clear
+                        .onAppear { inputBarHeight = proxy.size.height }
+                        .onChange(of: proxy.size.height) { _, newValue in inputBarHeight = newValue }
+                }
+            )
+        }
+        .background(.regularMaterial)
+        .edgesIgnoringSafeArea(.bottom)
     }
 
     private func hideKeyboard() {
