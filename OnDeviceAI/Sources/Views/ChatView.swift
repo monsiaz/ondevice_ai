@@ -22,17 +22,15 @@ struct ChatView: View {
             VStack(spacing: 0) {
                 header
                 messageArea
-                Spacer(minLength: 0)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             
-            VStack(spacing: 0) {
-                inputBar
-            }
-            .background(.thinMaterial)
-            .ignoresSafeArea(.keyboard, edges: .bottom)
+            inputBar
+                .padding(.bottom, keyboard.height > 0 ? keyboard.height - (firstKeyWindow?.safeAreaInsets.bottom ?? 0) : 0)
+                .animation(.interactiveSpring(response: 0.35, dampingFraction: 0.86, blendDuration: 0.25), value: keyboard.height)
         }
         .background(.thinMaterial)
+        .ignoresSafeArea(.keyboard, edges: .bottom)
         .onAppear {
             if showKeyboardOnLaunch {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
