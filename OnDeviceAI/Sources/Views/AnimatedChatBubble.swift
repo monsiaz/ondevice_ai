@@ -5,7 +5,7 @@ struct AnimatedChatBubble: View {
     @State private var showTTS = true
     @AppStorage("enableTTS") private var enableTTS: Bool = true
     @AppStorage("enableContextActions") private var enableContextActions: Bool = true
-    @EnvironmentObject var speech: SpeechManager
+    @StateObject private var speech = SpeechManager()
     @State private var isVisible = false
     @State private var shimmer = false
     @Environment(\.accessibilityReduceMotion) var reduceMotion
