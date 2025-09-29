@@ -180,7 +180,7 @@ struct ChatView: View {
                         }
                     }
                 }
-                .padding(.bottom, keyboard.height > 0 ? keyboard.height + 24 : inputBarHeight + 32)
+                .padding(.bottom, keyboard.height > 0 ? keyboard.height + 100 : inputBarHeight + 120)
             }
             .scrollDismissesKeyboard(.interactively)
             .scrollIndicators(.hidden)
@@ -211,7 +211,7 @@ struct ChatView: View {
                     hideKeyboard()
                 }
             )
-            .padding(.top, 8)
+            .padding(.top, 4)
             .background(
                 GeometryReader { proxy in
                     Color.clear
