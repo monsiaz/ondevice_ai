@@ -27,7 +27,7 @@ struct ChatView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             
             inputBar
-                .padding(.bottom, keyboard.height > 0 ? keyboard.height - (UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 0) : 0)
+                .padding(.bottom, keyboard.height > 0 ? keyboard.height - (firstKeyWindow?.safeAreaInsets.bottom ?? 0) : 0)
                 .animation(.interactiveSpring(response: 0.35, dampingFraction: 0.86, blendDuration: 0.25), value: keyboard.height)
         }
         .background(.thinMaterial) // Appliquer le fond ici
@@ -233,7 +233,7 @@ struct ChatView: View {
             }
         )
         .padding(.top, 8)
-        .padding(.bottom, (UIApplication.shared.windows.first?.safeAreaInsets.bottom ?? 0) == 0 ? 8 : 0)
+        .padding(.bottom, (firstKeyWindow?.safeAreaInsets.bottom ?? 0) == 0 ? 8 : 0)
         .background(
             GeometryReader { proxy in
                 Color.clear
@@ -263,4 +263,12 @@ struct ChatView: View {
             }
         }
     }
+}
+
+// MARK: - Window helper for safeArea (iOS 15+)
+private var firstKeyWindow: UIWindow? {
+    return UIApplication.shared.connectedScenes
+        .compactMap { $0 as? UIWindowScene }
+        .flatMap { $0.windows }
+        .first { $0.isKeyWindow }
 }

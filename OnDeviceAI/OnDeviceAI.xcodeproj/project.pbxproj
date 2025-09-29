@@ -46,6 +46,7 @@
 		F9E0960881E6A8B44CD94B11 /* LLMSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DA1DBD51FE2168B58259FC /* LLMSelection.swift */; };
 		FED998DA1C22827CC8DE37EB /* DeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02F6D457015E5E3310562F41 /* DeviceInfo.swift */; };
 		FFC464F0D86EE4553298554C /* ModelDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 613C6D96415A90BD33B7DD17 /* ModelDownloader.swift */; };
+		A1B2C3D4E5F6071890ABCDEF /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6071890ABCDE0 /* SpeechManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -87,6 +88,7 @@
 		D6706830890AD5DB913FF58C /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		D97A51E49612B36FA5A7C7DA /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		DAD848930306DE892B962783 /* LocalLLM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalLLM.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6071890ABCDE0 /* SpeechManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechManager.swift; sourceTree = "<group>"; };
 		FE807453E641524286C15F09 /* SuggestedPrompts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestedPrompts.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -184,6 +186,7 @@
 				0851D3A90548A93F6ECE21F4 /* ModelManager.swift */,
 				17FDC0E92C982D5EA7824857 /* ModelTranslations.swift */,
 				BFDE1B5F8188D70AF05130F6 /* PromptLibrary.swift */,
+				A1B2C3D4E5F6071890ABCDE0 /* SpeechManager.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -308,6 +311,7 @@
 				ACC0EA1791F8861352E5631C /* SettingsView.swift in Sources */,
 				72C024A3F3B2977F0651B274 /* SuggestedPrompts.swift in Sources */,
 				2D422904EF0628A0D1BF2582 /* UsageTipsView.swift in Sources */,
+				A1B2C3D4E5F6071890ABCDEF /* SpeechManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
