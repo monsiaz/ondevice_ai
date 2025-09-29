@@ -197,8 +197,11 @@ final class ChatVM: ObservableObject {
     private func processSend() {
         // Compose prompt now
         let userPrompt = input
+        let context = buildSlidingWindowContext(maxChars: 6000)
         let sys = UserDefaults.standard.string(forKey: "systemPrompt") ?? ""
-        let finalPrompt = sys.isEmpty ? userPrompt : "\(sys)\n\nUser: \(userPrompt)"
+        var finalPrompt = sys.isEmpty ? "" : sys + "\n\n"
+        if !context.isEmpty { finalPrompt += "Context:\n\(context)\n\n" }
+        finalPrompt += "User: \(userPrompt)"
         input = ""
         
         // Simplifier la logique - soit le modèle est chargé, soit on charge et on traite
@@ -357,6 +360,26 @@ final class ChatVM: ObservableObject {
             messages = Array(messages.suffix(keepCount))
             DebugLog.shared.log("Trimmed conversation to \(messages.count) messages")
         }
+    }
+
+    private func buildSlidingWindowContext(maxChars: Int) -> String {
+        // Build a compact context from the tail of the conversation.
+        // We join last messages until reaching maxChars, skipping extremely long blobs.
+        guard !messages.isEmpty else { return "" }
+        var acc = ""
+        for message in messages.suffix(18) { // align with trim limit
+            let role = message.role == .user ? "User" : (message.role == .assistant ? "Assistant" : "System")
+            var text = message.text
+            if text.count > maxChars / 2 { // truncate very long entries
+                let head = text.prefix(maxChars / 4)
+                let tail = text.suffix(maxChars / 4)
+                text = String(head) + "\n…(truncated)…\n" + String(tail)
+            }
+            let chunk = "\n\(role): \(text)"
+            if acc.count + chunk.count > maxChars { break }
+            acc += chunk
+        }
+        return acc.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     func unloadModel() {

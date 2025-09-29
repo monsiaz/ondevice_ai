@@ -77,8 +77,9 @@ final class HistoryStore: ObservableObject {
             backendName: vm.backendName
         ), at: 0)
         
-        if conversations.count > 50 {
-            conversations.removeLast()
+        // Keep only the 10 most recent conversations
+        if conversations.count > 10 {
+            conversations = Array(conversations.prefix(10))
         }
         
         save()
