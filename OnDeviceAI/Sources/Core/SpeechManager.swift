@@ -1,8 +1,10 @@
 import Foundation
 import AVFoundation
 import Speech
+import UIKit
 
 final class SpeechManager: NSObject, ObservableObject {
+    private let speechQueue = DispatchQueue(label: "com.ondeviceai.speech", qos: .userInitiated)
     @Published var isDictating: Bool = false
     @Published var transcript: String = ""
     @Published var isSpeaking: Bool = false
@@ -39,6 +41,10 @@ final class SpeechManager: NSObject, ObservableObject {
     func startDictation() {
         guard !audioEngine.isRunning else { return }
         transcript = ""
+        
+        // Haptic feedback
+        let impact = UIImpactFeedbackGenerator(style: .medium)
+        impact.impactOccurred()
 
         let audioSession = AVAudioSession.sharedInstance()
         try? audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
@@ -65,14 +71,16 @@ final class SpeechManager: NSObject, ObservableObject {
 
         recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest) { [weak self] result, error in
             guard let self else { return }
-            if let result = result {
-                Task { @MainActor in
-                    self.transcript = result.bestTranscription.formattedString
+            self.speechQueue.async {
+                if let result = result {
+                    Task { @MainActor in
+                        self.transcript = result.bestTranscription.formattedString
+                    }
                 }
-            }
-            if error != nil || (result?.isFinal ?? false) {
-                Task { @MainActor in
-                    self.stopDictation()
+                if error != nil || (result?.isFinal ?? false) {
+                    Task { @MainActor in
+                        self.stopDictation()
+                    }
                 }
             }
         }
@@ -91,6 +99,10 @@ final class SpeechManager: NSObject, ObservableObject {
         recognitionRequest = nil
         recognitionTask = nil
         isDictating = false
+        
+        // Haptic feedback
+        let impact = UIImpactFeedbackGenerator(style: .light)
+        impact.impactOccurred()
     }
 
     @MainActor
@@ -102,6 +114,10 @@ final class SpeechManager: NSObject, ObservableObject {
         utterance.rate = AVSpeechUtteranceDefaultSpeechRate
         synthesizer.speak(utterance)
         isSpeaking = true
+        
+        // Haptic feedback
+        let impact = UIImpactFeedbackGenerator(style: .light)
+        impact.impactOccurred()
     }
 
     @MainActor

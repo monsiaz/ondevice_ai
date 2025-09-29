@@ -31,6 +31,7 @@ struct AnimatedChatBubble: View {
                             Label(speech.isSpeaking ? "Stop" : "Listen", systemImage: speech.isSpeaking ? "stop.fill" : "speaker.wave.2")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
+                                .symbolEffect(.variableColor.iterative, isActive: speech.isSpeaking)
                         }
                         .buttonStyle(.plain)
                     }

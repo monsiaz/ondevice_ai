@@ -4,6 +4,7 @@ import UIKit
 @main
 struct OnDeviceAIApp: App {
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.openURL) private var openURL
     @StateObject private var chatVM: ChatVM
     
     @AppStorage("appTheme") private var appTheme: String = "system"
@@ -12,12 +13,12 @@ struct OnDeviceAIApp: App {
         let initialLLM = LLMSelector.select()
         let vm = ChatVM(llm: initialLLM.llm, backendName: initialLLM.backendName)
         _chatVM = StateObject(wrappedValue: vm)
+        
+        // Register URL scheme
+        URLScheme.registerHandlers()
 
-        // Ensure a default MLX model is installed to appear in selectors
-        // Use the lightweight bundled Qwen by default if present
-        if let _ = Bundle.main.url(forResource: "qwen2.5-0.5b-instruct-4bit", withExtension: nil) {
-            ModelManager.shared.installBundledModelIfNeeded(folderName: "qwen2.5-0.5b-instruct-4bit", displayName: "Qwen 2.5 0.5B")
-        }
+        // Note: No bundled models since v1.2 (removed to avoid App Store routing app detection)
+        // Models are now downloaded on-demand for enhanced flexibility
     }
 
     var body: some Scene {
@@ -39,6 +40,15 @@ struct OnDeviceAIApp: App {
                 }
                 .onReceive(NotificationCenter.default.publisher(for: Notification.Name("Action.SaveToNotes"))) { notif in
                     if let text = notif.object as? String { CalendarActions.saveToNotes(with: text) }
+                }
+                .onReceive(NotificationCenter.default.publisher(for: Notification.Name("Siri.AskQuestion"))) { notif in
+                    if let question = notif.object as? String {
+                        chatVM.input = question
+                        chatVM.send()
+                    }
+                }
+                .onOpenURL { url in
+                    handleURL(url)
                 }
         }
         .onChange(of: scenePhase) { _, newPhase in
@@ -65,5 +75,24 @@ struct OnDeviceAIApp: App {
                 break
             }
         }
+    }
+    
+    private func handleURL(_ url: URL) {
+        guard url.scheme == "ondeviceai" else { return }
+        
+        if url.host == "analyze",
+           let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
+           let textItem = components.queryItems?.first(where: { $0.name == "text" }),
+           let text = textItem.value?.removingPercentEncoding {
+            chatVM.input = text
+            chatVM.send()
+        }
+    }
+}
+
+enum URLScheme {
+    static func registerHandlers() {
+        // URL scheme registered in Info.plist: ondeviceai://
+        print("📱 URL scheme registered: ondeviceai://")
     }
 }

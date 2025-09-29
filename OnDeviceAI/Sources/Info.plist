@@ -31,5 +31,18 @@
 	<string>Microphone access is used for on-device voice dictation.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Speech recognition converts your voice to text on-device.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>fr.simonazoulay.OnDeviceAI</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>ondeviceai</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
