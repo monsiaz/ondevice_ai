@@ -1,0 +1,174 @@
+OnDeviceAI - Privacy Policy
+
+================================================================================
+PRIVACY-FIRST DESIGN COMMITMENT
+================================================================================
+
+OnDeviceAI is built with privacy as its foundational principle. We believe your 
+conversations, thoughts, and data belong to you and should never leave your 
+device without your explicit consent.
+
+================================================================================
+1. DATA COLLECTION AND PROCESSING
+================================================================================
+
+1.1 What We DON'T Collect:
+• Personal conversations or chat messages
+• User prompts or AI responses
+• Device identifiers, IP addresses, or location data
+• Usage analytics, telemetry, or behavioral tracking
+• User accounts, profiles, or authentication data
+• Contact lists, photos, or other personal files
+• Search history or app usage patterns
+• Crash reports or diagnostic data (unless manually shared)
+
+1.2 What We DO Process (On-Device Only):
+• Chat conversations stored locally for your convenience
+• Model preferences and settings stored in iOS user defaults
+• Downloaded AI models stored in your app's sandboxed directory
+• Performance metrics for optimization (never transmitted)
+
+1.3 On-Device Processing:
+All artificial intelligence processing occurs entirely on your device using:
+• Local neural network computation via MLX framework
+• iOS system frameworks for UI and data management
+• No external API calls for AI inference or model execution
+• Complete offline functionality for core features
+
+================================================================================
+2. DATA STORAGE AND RETENTION
+================================================================================
+
+2.1 Local Storage:
+• Conversations: Stored in iOS app sandbox using UserDefaults and local files
+• Models: Downloaded to secure app directory with iOS file system encryption
+• Settings: Stored locally using iOS standard UserDefaults mechanism
+• History: Maintained locally with user-controlled deletion options
+
+2.2 Data Retention:
+• You control all data retention through in-app settings
+• Conversations can be deleted individually or en masse
+• Downloaded models can be removed to free storage space
+• All data is automatically deleted when you uninstall the app
+
+2.3 Data Security:
+• All local data benefits from iOS encryption and sandboxing
+• No data synchronization with cloud services
+• No backup of conversations to iCloud or other cloud platforms
+• Models are downloaded over HTTPS and verified for integrity
+
+================================================================================
+3. NETWORK USAGE AND EXTERNAL CONNECTIONS
+================================================================================
+
+3.1 Model Downloads:
+• AI models are downloaded from reputable sources (Hugging Face, etc.)
+• Downloads occur only with your explicit permission
+• HTTPS encryption protects download integrity
+• No personal data is transmitted during model downloads
+
+3.2 No Analytics or Tracking:
+• No connection to analytics services (Google Analytics, Firebase, etc.)
+• No advertising networks or tracking SDKs
+• No social media integrations or sharing capabilities
+• No error reporting to external services without explicit user action
+
+3.3 Future Updates:
+• App updates occur through the iOS App Store standard mechanism
+• No automatic data transmission with app updates
+• Update process does not access or transmit user data
+
+================================================================================
+4. THIRD-PARTY AI MODELS
+================================================================================
+
+4.1 Model Sources:
+• AI models are sourced from public repositories and creators
+• Each model retains its original license and terms
+• Models process data locally without external communication
+• No data is transmitted to model creators or hosting platforms
+
+4.2 Model Privacy:
+• Downloaded models operate entirely offline
+• No telemetry or usage data is sent to model developers
+• Models cannot access data outside the OnDeviceAI application
+• You can delete any model at any time
+
+================================================================================
+5. PERMISSIONS AND ACCESS
+================================================================================
+
+OnDeviceAI requests minimal iOS permissions:
+• Storage: To download and store AI models locally
+• Network: Only for downloading models (optional)
+• No camera, microphone, contacts, or location access required
+• No background app refresh or notifications
+
+================================================================================
+6. CHILDREN'S PRIVACY
+================================================================================
+
+While OnDeviceAI does not collect personal information from any users, we are 
+committed to protecting children's privacy:
+• No personal data collection means COPPA compliance by design
+• Parental controls can be implemented through iOS Screen Time
+• No social features or communication with other users
+• Content filtering relies on model training and user supervision
+
+================================================================================
+7. INTERNATIONAL USERS
+================================================================================
+
+7.1 GDPR Compliance (EU):
+• No personal data processing means automatic GDPR compliance
+• Right to erasure: Delete app to remove all data
+• Data portability: Export conversations locally if needed
+• No data processing consent required due to local-only processing
+
+7.2 CCPA Compliance (California):
+• No personal information collection, sale, or sharing
+• No opt-out mechanisms needed due to privacy-by-design approach
+
+================================================================================
+8. PRIVACY POLICY UPDATES
+================================================================================
+
+We may update this Privacy Policy to reflect:
+• Changes in legal requirements
+• New features that maintain our privacy-first approach
+• Clarifications based on user feedback
+
+Updates will be communicated through:
+• App Store update notes
+• In-app notifications for significant changes
+• Updated version available in the app's legal section
+
+================================================================================
+9. CONTACT INFORMATION
+================================================================================
+
+For privacy-related questions or concerns:
+• Email: privacy@ondeviceai.app
+• Response time: Within 5 business days
+• Language: English and French supported
+
+We welcome feedback on our privacy practices and are committed to maintaining 
+the highest standards of user privacy protection.
+
+================================================================================
+10. VERIFICATION AND TRANSPARENCY
+================================================================================
+
+Our privacy claims can be verified through:
+• Network monitoring (no outbound connections during AI processing)
+• Open source inspection of key components where applicable
+• iOS privacy reports showing minimal data access
+• Independent security audits (results published annually)
+
+================================================================================
+
+Last Updated: September 28, 2025
+Effective Date: September 28, 2025
+
+This Privacy Policy represents our unwavering commitment to protecting your 
+privacy while providing powerful AI capabilities directly on your device.

@@ -1,6 +1,6 @@
 # Contributing to OnDeviceAI
 
-Thank you for your interest in OnDeviceAI! This project represents a demonstration of privacy-first AI technology on iOS.
+Thank you for your interest in OnDeviceAI! This project represents a revolutionary demonstration of hybrid AI technology on iOS, combining Apple Intelligence with advanced MLX models.
 
 ## 🚨 Important Note
 
@@ -60,11 +60,13 @@ The developer is responsive to DMs on X/Twitter and welcomes technical discussio
 
 Understanding our mission helps align any contributions:
 
-- **Privacy First:** All processing stays on-device
-- **iOS Native:** Leveraging Apple's ecosystem fully
-- **Performance Optimized:** Efficient use of device resources
-- **User Friendly:** Intuitive and accessible design
-- **Educational:** Demonstrating possibilities of local AI
+- **Privacy First:** All processing stays on-device with Apple ecosystem integration
+- **Hybrid AI:** Seamless combination of Apple Intelligence and MLX models
+- **Zero Setup:** Instant functionality without configuration
+- **iOS Native:** Full leveraging of Apple's AI and ML frameworks
+- **Performance Optimized:** Intelligent resource management and thermal protection
+- **User Friendly:** Intuitive interface with smart AI routing
+- **Educational:** Demonstrating cutting-edge hybrid AI architecture
 
 ## 📚 Learning Resources
 
@@ -72,8 +74,10 @@ To better understand the project:
 
 - Read the [Privacy Policy](https://simonazoulay.github.io/ondeviceai/privacy)
 - Check out the [Support Documentation](https://simonazoulay.github.io/ondeviceai/support)
-- Explore Apple's [MLX Swift Documentation](https://github.com/ml-explore/mlx-swift)
-- Study [iOS Privacy Guidelines](https://developer.apple.com/privacy/)
+- Explore [Apple Intelligence Documentation](https://developer.apple.com/apple-intelligence/)
+- Study Apple's [MLX Swift Documentation](https://github.com/ml-explore/mlx-swift)
+- Review [iOS Privacy Guidelines](https://developer.apple.com/privacy/)
+- Learn about [iOS 26.0 AI Features](https://developer.apple.com/ios/)
 
 ## ⚖️ Legal Guidelines
 
@@ -89,10 +93,11 @@ When engaging with this project:
 ## 🙏 Acknowledgments
 
 Special thanks to:
-- **Apple** for the MLX framework and iOS platform
-- **Alibaba Cloud** for the Qwen models
-- **MLX Community** for optimization techniques
-- **Privacy advocates** who inspire this work
+- **Apple** for Apple Intelligence, MLX framework, and the iOS platform
+- **Apple Intelligence Team** for native AI integration capabilities
+- **MLX Community** for advanced model optimization techniques
+- **Open Source AI Community** for model development and research
+- **Privacy advocates** who inspire privacy-first technology development
 
 ---
 

@@ -33,22 +33,30 @@ final class ChatVM: ObservableObject {
 
     init(llm: LocalLLM, backendName: String) {
         self.llm = llm
-        self.backendName = "MLX" // Commence par MLX
-        self.currentModel = "Qwen 2.5 0.5B" // Modèle par défaut
-        self.modelLoadingStatus = "Checking for models..."
+        self.backendName = backendName // Use provided backend
+        self.currentModel = "Apple Intelligence" // Default model name
+        self.modelLoadingStatus = "Initializing AI system..."
 
         Task {
-            // 1) If a model is already installed, load the first one
+            // Check for downloaded models first
             let installed = ModelManager.shared.listInstalled()
             if let first = installed.first {
-                await MainActor.run { self.modelLoadingStatus = "Loading \(first.displayName)..." }
-                try? await Task.sleep(nanoseconds: 100_000_000)
-                await MainActor.run { self.load(modelURL: ModelManager.shared.url(for: first)) }
+                await MainActor.run { 
+                    self.modelLoadingStatus = "Loading \(first.displayName)..."
+                    // Switch to MLX for downloaded models
+                    self.switchToBackend(for: first.displayName)
+                    self.load(modelURL: ModelManager.shared.url(for: first))
+                }
                 return
             }
-            // 2) Otherwise, auto-download a very light default (TinyLlama 1.1B 4-bit)
-            await MainActor.run { self.modelLoadingStatus = "Downloading default model..." }
-            await self.installAndLoadDefaultTinyModel()
+            
+            // Use Apple FoundationModels as default (already initialized)
+            await MainActor.run {
+                self.modelLoadingStatus = ""
+                self.currentModel = "Apple Intelligence"
+                self.backendName = "Neural Engine"
+                print("✅ Using Apple FoundationModels as default")
+            }
         }
     }
 
@@ -90,29 +98,39 @@ final class ChatVM: ObservableObject {
     }
 
     func load(modelURL: URL) {
-        // Annuler le stream en cours et décharger l'ancien modèle
+        // Cancel current stream and unload model
         cancelStreaming()
         llm.unload()
         isModelLoaded = false
         modelLoadingStatus = "Loading model..."
         
-        // MLX only now
+        let modelName = modelURL.lastPathComponent
+        
+        // Handle Apple Intelligence special case
+        if modelURL.path.contains("/System/AppleIntelligence") {
+            currentModel = "Apple Intelligence"
+            backendName = "Neural Engine"
+            isModelLoaded = true
+            modelLoadingStatus = ""
+            print("✅ Switched to Apple Intelligence (Neural Engine)")
+            return
+        }
+        
+        // Switch to MLX for downloaded models
+        switchToBackend(for: modelName)
         
         do { 
             try llm.load(modelURL: modelURL)
-            // Update current model name from the URL
-            currentModel = modelURL.lastPathComponent
-            backendName = "MLX"
-            print("✅ Model loaded: \(currentModel) via MLX")
+            currentModel = modelName
+            print("✅ Model loaded: \(currentModel) via \(backendName)")
             
-            // Délai de warm-up pour que le modèle soit vraiment prêt
+            // Warm-up delay
             Task {
                 try? await Task.sleep(nanoseconds: 500_000_000) // 500ms
                 await MainActor.run {
                     self.isModelLoaded = true
                     self.modelLoadingStatus = ""
-                    DebugLog.shared.log("Model \(self.currentModel) ready for generation")
-                    // Si un prompt était en file d'attente, le traiter maintenant
+                    DebugLog.shared.log("Model \(self.currentModel) ready via \(self.backendName)")
                     self.processQueuedIfNeeded()
                 }
             }
@@ -122,6 +140,13 @@ final class ChatVM: ObservableObject {
             isModelLoaded = false
             modelLoadingStatus = "Error loading model"
         }
+    }
+    
+    // Switch backend based on model type  
+    private func switchToBackend(for modelName: String) {
+        let selection = LLMSelector.selectForModel(modelName)
+        backendName = selection.backendName
+        print("🔄 Switched to \(backendName) for \(modelName)")
     }
 
     func clear() { 

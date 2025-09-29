@@ -1,10 +1,9 @@
 import Foundation
 
-#if canImport(FoundationModels)
 import FoundationModels
 
 @available(iOS 26.0, *)
-@MainActor
+@MainActor  
 final class AppleFoundationLLM: LocalLLM {
     private var session: LanguageModelSession?
     private var currentTask: Task<Void, Never>?
@@ -21,12 +20,13 @@ final class AppleFoundationLLM: LocalLLM {
 
     func generate(prompt: String, onToken: @escaping (String) -> Void) throws {
         if session == nil {
-            // Configure a simple instruction; adjust as needed
-            let instructions = "You are a helpful assistant. Answer concisely."
+            // Optimized instructions for better responses
+            let instructions = "You are an intelligent AI assistant. Provide helpful, accurate, and contextual responses. Analyze the user's question carefully and respond appropriately to their specific needs."
             session = LanguageModelSession(model: .default, tools: [], instructions: instructions)
             session?.prewarm()
+            print("🧠 Apple FoundationModels session initialized with Neural Engine")
         }
-        guard let session else { throw NSError(domain: "AppleFM", code: 1, userInfo: [NSLocalizedDescriptionKey: "Unable to create session"]) }
+        guard let session else { throw NSError(domain: "AppleFM", code: 1, userInfo: [NSLocalizedDescriptionKey: "Unable to create Neural Engine session"]) }
 
         // Cancel any previous generation task
         currentTask?.cancel()
@@ -60,18 +60,5 @@ final class AppleFoundationLLM: LocalLLM {
         }
     }
 }
-
-#else
-
-@MainActor
-final class AppleFoundationLLM: LocalLLM {
-    func load(modelURL: URL) throws {}
-    func unload() {}
-    func generate(prompt: String, onToken: @escaping (String) -> Void) throws {
-        throw NSError(domain: "AppleFM", code: 2, userInfo: [NSLocalizedDescriptionKey: "FoundationModels framework not available on this platform"])
-    }
-}
-
-#endif
 
 

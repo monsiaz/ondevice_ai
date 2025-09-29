@@ -6,7 +6,7 @@ options:
       PRODUCT_BUNDLE_IDENTIFIER: fr.simonazoulay.OnDeviceAI
   groupSortPosition: bottom
   deploymentTarget:
-    iOS: 18.0
+    iOS: 26.0
 targets:
   OnDeviceAI:
     type: application
@@ -17,6 +17,7 @@ targets:
           - "**/AppleFM/**/Info.plist"
     resources:
       - "Sources/Resources"
+      - "Sources/Assets.xcassets"
     dependencies:
       - package: MLXSwift
         product: MLX

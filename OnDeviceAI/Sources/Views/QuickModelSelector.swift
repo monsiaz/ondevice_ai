@@ -5,14 +5,46 @@ struct QuickModelSelector: View {
     @Environment(\.dismiss) private var dismiss
     @State private var models: [LocalModel] = []
     @State private var modelToDelete: LocalModel?
+    @State private var showingAppleIntelligence = true
     
     var body: some View {
         NavigationStack {
             VStack {
                 List {
-                    Section("Downloaded Models") {
+                    // Apple Intelligence (système par défaut)
+                    Section("System AI") {
+                        Button(action: { 
+                            onPick(URL(fileURLWithPath: "/System/AppleIntelligence"))
+                            dismiss()
+                        }) {
+                            HStack {
+                                Image(systemName: "brain.head.profile")
+                                    .foregroundColor(.blue)
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Apple Intelligence")
+                                        .font(.headline)
+                                        .foregroundColor(.primary)
+                                    Text("Neural Engine • System Model")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                                Text("Default")
+                                    .font(.caption2.weight(.semibold))
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(.blue.opacity(0.2))
+                                    .foregroundColor(.blue)
+                                    .cornerRadius(6)
+                            }
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    
+                    // Modèles téléchargés (MLX)
+                    Section("Downloaded Models (MLX)") {
                         if models.isEmpty {
-                            Text("No other models downloaded yet.")
+                            Text("No downloaded models yet. Apple Intelligence is available by default.")
                                 .foregroundStyle(.secondary)
                         } else {
                             ForEach(models) { model in
@@ -22,23 +54,23 @@ struct QuickModelSelector: View {
                                     dismiss()
                                 }) {
                                     HStack {
-                                        Circle()
-                                            .fill(Color.orange)
-                                            .frame(width: 12, height: 12)
-                                        VStack(alignment: .leading) {
+                                        Image(systemName: "cpu")
+                                            .foregroundColor(.orange)
+                                        VStack(alignment: .leading, spacing: 4) {
                                             Text(model.displayName)
                                                 .font(.headline)
+                                                .foregroundColor(.primary)
                                             Text("MLX • \(model.folderName)")
                                                 .font(.caption)
                                                 .foregroundStyle(.secondary)
                                         }
                                         Spacer()
-                                        Text("Downloaded")
+                                        Text("MLX")
                                             .font(.caption2.weight(.semibold))
                                             .padding(.horizontal, 8)
                                             .padding(.vertical, 4)
-                                            .background(Color.green.opacity(0.2))
-                                            .foregroundColor(.green)
+                                            .background(.orange.opacity(0.2))
+                                            .foregroundColor(.orange)
                                             .cornerRadius(6)
                                         Button(role: .destructive) {
                                             modelToDelete = model

@@ -1,0 +1,12 @@
+Welcome to OnDeviceAI
+
+- Chat privately with local MLX models on-device.
+- Tap Model to manage system and local models.
+- Type your question; press Send or Return.
+- Swipe down or tap Hide to dismiss the keyboard.
+- Settings → Theme, Legal, and Help.
+
+Best practices
+- Keep prompts concise; add specifics for better results.
+- For longer tasks, break into steps.
+- You can clear the chat with the Clear button.
