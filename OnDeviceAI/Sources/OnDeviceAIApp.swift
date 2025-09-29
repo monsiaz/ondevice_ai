@@ -24,10 +24,6 @@ struct OnDeviceAIApp: App {
         WindowGroup {
             RootView(vm: chatVM)
                 .preferredColorScheme(appTheme == "light" ? .light : (appTheme == "dark" ? .dark : nil))
-                .onReceive(NotificationCenter.default.publisher(for: UIApplication.didReceiveMemoryWarningNotification)) { _ in
-                    // Décharger immédiatement en cas de pression mémoire
-                    chatVM.unloadModel()
-                }
                 .task {
                     // La logique de configuration initiale est maintenant dans ChatVM
                 }
@@ -55,6 +51,10 @@ struct OnDeviceAIApp: App {
             @unknown default:
                 break
             }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didReceiveMemoryWarningNotification)) { _ in
+            // Décharger immédiatement en cas de pression mémoire
+            chatVM.unloadModel()
         }
     }
 }
