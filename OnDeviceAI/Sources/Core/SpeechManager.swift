@@ -2,7 +2,6 @@ import Foundation
 import AVFoundation
 import Speech
 
-@MainActor
 final class SpeechManager: NSObject, ObservableObject {
     @Published var isDictating: Bool = false
     @Published var transcript: String = ""
@@ -15,6 +14,7 @@ final class SpeechManager: NSObject, ObservableObject {
     private let synthesizer = AVSpeechSynthesizer()
 
     override init() {
+        super.init()
         synthesizer.delegate = self
     }
 
@@ -22,14 +22,20 @@ final class SpeechManager: NSObject, ObservableObject {
         await withCheckedContinuation { (cont: CheckedContinuation<Void, Never>) in
             SFSpeechRecognizer.requestAuthorization { _ in cont.resume() }
         }
-        let session = AVAudioSession.sharedInstance()
-        session.requestRecordPermission { _ in }
+        if #available(iOS 17.0, *) {
+            AVAudioApplication.requestRecordPermission { _ in }
+        } else {
+            let session = AVAudioSession.sharedInstance()
+            session.requestRecordPermission { _ in }
+        }
     }
 
+    @MainActor
     func toggleDictation() {
         isDictating ? stopDictation() : startDictation()
     }
 
+    @MainActor
     func startDictation() {
         guard !audioEngine.isRunning else { return }
         transcript = ""
@@ -69,6 +75,7 @@ final class SpeechManager: NSObject, ObservableObject {
         isDictating = true
     }
 
+    @MainActor
     func stopDictation() {
         if audioEngine.isRunning {
             audioEngine.stop()
@@ -81,6 +88,7 @@ final class SpeechManager: NSObject, ObservableObject {
         isDictating = false
     }
 
+    @MainActor
     func speak(_ text: String) {
         guard !text.isEmpty else { return }
         stopSpeaking()
@@ -91,6 +99,7 @@ final class SpeechManager: NSObject, ObservableObject {
         isSpeaking = true
     }
 
+    @MainActor
     func stopSpeaking() {
         if synthesizer.isSpeaking { synthesizer.stopSpeaking(at: .immediate) }
         isSpeaking = false
@@ -99,10 +108,10 @@ final class SpeechManager: NSObject, ObservableObject {
 
 extension SpeechManager: AVSpeechSynthesizerDelegate {
     func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
-        isSpeaking = false
+        Task { @MainActor in self.isSpeaking = false }
     }
     func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
-        isSpeaking = false
+        Task { @MainActor in self.isSpeaking = false }
     }
 }
 
