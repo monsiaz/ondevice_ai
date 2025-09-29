@@ -198,7 +198,7 @@ final class ChatVM: ObservableObject {
         // Compose prompt now
         let userPrompt = input
         let sys = UserDefaults.standard.string(forKey: "systemPrompt") ?? ""
-        let finalPrompt = sys.isEmpty ? userPrompt : "\(sys)\n\nUser: \(userPrompt)"
+        let finalPrompt = sys.isEmpty ? userPrompt : "\(sys)\n\n\(userPrompt)"
         input = ""
         
         // Simplifier la logique - soit le modèle est chargé, soit on charge et on traite
