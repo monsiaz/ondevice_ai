@@ -4,6 +4,7 @@ struct AnimatedChatBubble: View {
     let message: ChatBubble
     @State private var showTTS = true
     @AppStorage("enableTTS") private var enableTTS: Bool = true
+    @AppStorage("enableContextActions") private var enableContextActions: Bool = true
     @EnvironmentObject var speech: SpeechManager
     @State private var isVisible = false
     @State private var shimmer = false
@@ -16,17 +17,23 @@ struct AnimatedChatBubble: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text(message.text)
                     .contextMenu {
-                        Button("Add to Calendar") { NotificationCenter.default.post(name: Notification.Name("Action.AddToCalendar"), object: message.text) }
-                        Button("Create Reminder") { NotificationCenter.default.post(name: Notification.Name("Action.CreateReminder"), object: message.text) }
-                        Button("Save to Notes") { NotificationCenter.default.post(name: Notification.Name("Action.SaveToNotes"), object: message.text) }
+                        if enableContextActions {
+                            Button("Add to Calendar") { NotificationCenter.default.post(name: Notification.Name("Action.AddToCalendar"), object: message.text) }
+                            Button("Create Reminder") { NotificationCenter.default.post(name: Notification.Name("Action.CreateReminder"), object: message.text) }
+                            Button("Save to Notes") { NotificationCenter.default.post(name: Notification.Name("Action.SaveToNotes"), object: message.text) }
+                        }
                     }
                 if message.role == .assistant && enableTTS {
-                    Button(action: { speech.speak(message.text) }) {
-                        Label("Listen", systemImage: speech.isSpeaking ? "speaker.wave.2.fill" : "speaker.wave.2")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                    HStack(spacing: 12) {
+                        Button(action: { 
+                            if speech.isSpeaking { speech.stopSpeaking() } else { speech.speak(message.text) }
+                        }) {
+                            Label(speech.isSpeaking ? "Stop" : "Listen", systemImage: speech.isSpeaking ? "stop.fill" : "speaker.wave.2")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                     .padding(.top, 2)
                 }
             }

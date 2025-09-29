@@ -53,8 +53,10 @@ struct SettingsView: View {
             
             Section(LocalizedString.get("behavior", language: currentLanguage)) {
                 Toggle(LocalizedString.get("show_keyboard_launch", language: currentLanguage), isOn: $showKeyboardOnLaunch)
-                Toggle("Enable microphone (dictation)", isOn: .init(get: { UserDefaults.standard.bool(forKey: "enableMic") }, set: { UserDefaults.standard.set($0, forKey: "enableMic") }))
-                Toggle("Enable text-to-speech", isOn: .init(get: { UserDefaults.standard.bool(forKey: "enableTTS") }, set: { UserDefaults.standard.set($0, forKey: "enableTTS") }))
+            }
+
+            Section("Advanced Features") {
+                NavigationLink("Voice & Shortcuts") { AdvancedFeaturesView(language: currentLanguage) }
             }
 
             Section(LocalizedString.get("models", language: currentLanguage)) {
@@ -253,5 +255,49 @@ struct PersonalizationView: View {
         }
         .padding()
         .navigationTitle(LocalizedString.get("personalization", language: language))
+    }
+}
+
+struct AdvancedFeaturesView: View {
+    let language: AppLanguage
+    @AppStorage("enableMic") private var enableMic: Bool = true
+    @AppStorage("enableTTS") private var enableTTS: Bool = true
+    @AppStorage("enableContextActions") private var enableContextActions: Bool = true
+    
+    var body: some View {
+        Form {
+            Section {
+                Text("Control advanced features like voice dictation, text-to-speech, and context actions. Disabling these options will hide the buttons and remove functionality.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            
+            Section("Voice Features") {
+                Toggle("Microphone (Dictation)", isOn: $enableMic)
+                Text("Show microphone button in input bar for voice dictation")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                
+                Toggle("Text-to-Speech", isOn: $enableTTS)
+                Text("Show 'Listen' button under assistant replies")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            
+            Section("Shortcuts & Actions") {
+                Toggle("Context Menu Actions", isOn: $enableContextActions)
+                Text("Enable long-press actions: Add to Calendar, Create Reminder, Save to Notes")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            
+            Section {
+                Text("These features require permissions (Microphone, Calendar, Reminders). You will be prompted when needed.")
+                    .font(.caption)
+                    .foregroundStyle(.orange)
+            }
+        }
+        .navigationTitle("Voice & Shortcuts")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }

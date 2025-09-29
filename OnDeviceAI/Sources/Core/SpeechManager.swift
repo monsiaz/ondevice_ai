@@ -43,6 +43,11 @@ final class SpeechManager: NSObject, ObservableObject {
         let audioSession = AVAudioSession.sharedInstance()
         try? audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
         try? audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+        
+        guard speechRecognizer?.isAvailable == true else {
+            print("Speech recognition not available")
+            return
+        }
 
         recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
         guard let recognitionRequest else { return }
