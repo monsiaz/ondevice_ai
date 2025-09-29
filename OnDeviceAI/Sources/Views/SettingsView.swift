@@ -53,6 +53,10 @@ struct SettingsView: View {
             
             Section(LocalizedString.get("behavior", language: currentLanguage)) {
                 Toggle(LocalizedString.get("show_keyboard_launch", language: currentLanguage), isOn: $showKeyboardOnLaunch)
+                Toggle("Keep keyboard open after sending", isOn: .init(
+                    get: { UserDefaults.standard.bool(forKey: "keepKeyboardAfterSend") },
+                    set: { UserDefaults.standard.set($0, forKey: "keepKeyboardAfterSend") }
+                ))
             }
 
             Section("Advanced Features") {

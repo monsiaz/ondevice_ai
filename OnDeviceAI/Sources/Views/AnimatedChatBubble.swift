@@ -171,7 +171,19 @@ struct AnimatedInputBar: View {
     
     private func handleSend() {
         guard !input.isEmpty else { return }
+        
+        // Stop dictation if active
+        if speechManager.isDictating {
+            speechManager.stopDictation()
+        }
+        
         onSend()
+        
+        // Close keyboard after send (unless user wants it to stay)
+        let keepKeyboardOpen = UserDefaults.standard.bool(forKey: "keepKeyboardAfterSend")
+        if !keepKeyboardOpen {
+            inputFocused = false
+        }
     }
 }
 
