@@ -3,7 +3,7 @@ import AVFoundation
 import Speech
 
 @MainActor
-final class SpeechManager: ObservableObject {
+final class SpeechManager: NSObject, ObservableObject {
     @Published var isDictating: Bool = false
     @Published var transcript: String = ""
     @Published var isSpeaking: Bool = false
@@ -14,7 +14,7 @@ final class SpeechManager: ObservableObject {
     private let speechRecognizer = SFSpeechRecognizer()
     private let synthesizer = AVSpeechSynthesizer()
 
-    init() {
+    override init() {
         synthesizer.delegate = self
     }
 
