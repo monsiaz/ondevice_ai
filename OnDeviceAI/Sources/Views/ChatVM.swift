@@ -201,51 +201,56 @@ final class ChatVM: ObservableObject {
         let finalPrompt = sys.isEmpty ? userPrompt : "\(sys)\n\n\(userPrompt)"
         input = ""
         
-        // Simplifier la logique - soit le modèle est chargé, soit on charge et on traite
+        // Check if model is loaded
         if !isModelLoaded || !modelLoadingStatus.isEmpty {
-            // Queue le prompt et charge le modèle
+            // Queue le prompt et charge le modèle SEULEMENT si pas déjà chargé
             queuedPrompt = finalPrompt
-            DebugLog.shared.log("Queued prompt, ensuring model is loaded...")
+            DebugLog.shared.log("Model not ready. Queued prompt, ensuring model is loaded...")
+            DebugLog.shared.log("Current: model=\(currentModel), backend=\(backendName), isLoaded=\(isModelLoaded)")
             ensureModelLoaded()
             return
         }
 
+        DebugLog.shared.log("✅ Model already loaded: \(currentModel) via \(backendName)")
         DebugLog.shared.log("Starting generation with loaded model")
         startSending(finalPrompt: finalPrompt, userPrompt: userPrompt)
     }
     
     private func ensureModelLoaded() {
-        guard !isModelLoaded else { return }
+        guard !isModelLoaded else { 
+            DebugLog.shared.log("⚠️ ensureModelLoaded called but model already loaded: \(currentModel)")
+            return 
+        }
+        
+        DebugLog.shared.log("🔍 ensureModelLoaded: current=\(currentModel), backend=\(backendName)")
         
         // Priority 1: If backendName is "Neural Engine", use Apple Intelligence
         if backendName == "Neural Engine" || currentModel.contains("Apple Intelligence") {
-            DebugLog.shared.log("Using Apple Intelligence (no loading needed)")
+            DebugLog.shared.log("✅ Using Apple Intelligence (no loading needed)")
             isModelLoaded = true
             modelLoadingStatus = ""
             return
         }
         
-        // Priority 2: If a specific currentModel is set, try to load it
-        if !currentModel.isEmpty && currentModel != "Local model (to download)" {
+        // Priority 2: If a specific currentModel is set AND exists, load it (don't auto-switch)
+        if !currentModel.isEmpty && currentModel != "Local model (to download)" && currentModel != "Error" {
             let candidate = currentModel.contains("-4bit") ? currentModel : currentModel + "-4bit"
             if ModelManager.shared.modelExists(folderName: candidate) {
                 let url = ModelManager.shared.url(for: LocalModel(displayName: candidate, folderName: candidate))
-                DebugLog.shared.log("Loading selected model: \(candidate)")
+                DebugLog.shared.log("📦 Loading user-selected model: \(candidate)")
                 load(modelURL: url)
                 return
+            } else {
+                DebugLog.shared.log("⚠️ Selected model \(candidate) not found on device")
             }
         }
         
-        // Priority 3: Fall back to installed models
-        if ModelManager.shared.modelExists(folderName: "qwen2.5-0.5b-instruct-4bit") {
-            let url = ModelManager.shared.url(for: LocalModel(displayName: "Qwen 2.5 0.5B", folderName: "qwen2.5-0.5b-instruct-4bit"))
-            DebugLog.shared.log("Loading Qwen 2.5 0.5B from: \(url.path)")
-            load(modelURL: url)
-        } else if let first = ModelManager.shared.listInstalled().first {
-            DebugLog.shared.log("Loading first installed model: \(first.displayName)")
+        // Priority 3: Fall back to first available model ONLY if no specific model selected
+        if let first = ModelManager.shared.listInstalled().first {
+            DebugLog.shared.log("📦 Fallback: Loading first available model: \(first.displayName)")
             load(modelURL: ModelManager.shared.url(for: first))
         } else {
-            DebugLog.shared.log("No models installed, auto-installing default tiny model")
+            DebugLog.shared.log("📥 No models installed, auto-installing default tiny model")
             Task { await self.installAndLoadDefaultTinyModel() }
         }
     }
