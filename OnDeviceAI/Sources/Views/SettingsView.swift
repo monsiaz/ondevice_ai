@@ -51,16 +51,31 @@ struct SettingsView: View {
                 }
             }
             
+            Section(LocalizedString.get("language", language: currentLanguage)) {
+                Picker(LocalizedString.get("language", language: currentLanguage), selection: $appLanguage) {
+                    ForEach(AppLanguage.allCases, id: \.rawValue) { lang in
+                        Text("\(lang.flag) \(lang.displayName)")
+                            .tag(lang.rawValue)
+                    }
+                }
+                .pickerStyle(.menu)
+                .labelsHidden()
+                
+                Text("The selected language will be used for voice dictation and text-to-speech.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            
             Section(LocalizedString.get("behavior", language: currentLanguage)) {
                 Toggle(LocalizedString.get("show_keyboard_launch", language: currentLanguage), isOn: $showKeyboardOnLaunch)
-                Toggle("Keep keyboard open after sending", isOn: .init(
+                Toggle(LocalizedString.get("keep_keyboard_after_send", language: currentLanguage), isOn: .init(
                     get: { UserDefaults.standard.bool(forKey: "keepKeyboardAfterSend") },
                     set: { UserDefaults.standard.set($0, forKey: "keepKeyboardAfterSend") }
                 ))
             }
 
-            Section("Advanced Features") {
-                NavigationLink("Voice & Shortcuts") { AdvancedFeaturesView(language: currentLanguage) }
+            Section(LocalizedString.get("advanced_features", language: currentLanguage)) {
+                NavigationLink(LocalizedString.get("voice_and_shortcuts", language: currentLanguage)) { AdvancedFeaturesView(language: currentLanguage) }
             }
 
             Section(LocalizedString.get("models", language: currentLanguage)) {
