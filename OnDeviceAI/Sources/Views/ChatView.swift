@@ -184,8 +184,9 @@ struct ChatView: View {
                         }
                         
                         // Force extra space at bottom so last message is well above input bar
-                        Color.clear
-                            .frame(height: 200)
+                        Spacer()
+                            .frame(height: 250)
+                            .id("bottom-spacer")
                     }
                 }
                 .padding(.bottom, keyboard.height > 0 ? keyboard.height : 0)
@@ -233,9 +234,11 @@ struct ChatView: View {
 
     private func scrollToBottom(proxy: ScrollViewProxy) {
         guard let lastId = vm.messages.last?.id else { return }
-        DispatchQueue.main.async {
-            withAnimation(.spring()) {
-                proxy.scrollTo(lastId, anchor: .bottom)
+        // Scroll to show the last message with space below it
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+            withAnimation(.easeOut(duration: 0.3)) {
+                // Scroll to bottom-spacer instead of last message to ensure space
+                proxy.scrollTo("bottom-spacer", anchor: .bottom)
             }
         }
     }
