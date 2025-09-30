@@ -5,6 +5,7 @@ struct SettingsView: View {
     @AppStorage("showKeyboardOnLaunch") private var showKeyboardOnLaunch = false
     @AppStorage("appLanguage") private var appLanguage: String = "en"
     @State private var showClearConfirmation = false
+    @State private var showClearSuccess = false
     @State private var clearMessage = ""
     
     private var currentLanguage: AppLanguage {
@@ -146,8 +147,11 @@ struct SettingsView: View {
         } message: {
             Text("This will delete all downloaded models and conversation history. This action cannot be undone.")
         }
-        .alert("Cache Cleared", isPresented: .constant(!clearMessage.isEmpty)) {
-            Button("OK") { clearMessage = "" }
+        .alert("Cache Cleared", isPresented: $showClearSuccess) {
+            Button("OK") { 
+                showClearSuccess = false
+                clearMessage = ""
+            }
         } message: {
             Text(clearMessage)
         }
@@ -182,6 +186,7 @@ struct SettingsView: View {
         
         let freedMB = Double(freedSpace) / (1024 * 1024)
         clearMessage = String(format: "✅ Cache cleared!\n%.1f MB freed", freedMB)
+        showClearSuccess = true
     }
 }
 
