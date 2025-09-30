@@ -203,6 +203,12 @@ struct ChatView: View {
                 withAnimation(.spring()) {
                 }
             }
+            .onChange(of: vm.isGenerating) { wasGenerating, isGenerating in
+                // When generation finishes, ensure final scroll position
+                if wasGenerating && !isGenerating && !vm.messages.isEmpty {
+                    scrollToBottom(proxy: proxy)
+                }
+            }
         }
     }
     
