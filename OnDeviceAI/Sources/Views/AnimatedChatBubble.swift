@@ -6,10 +6,15 @@ struct AnimatedChatBubble: View {
     @AppStorage("enableTTS") private var enableTTS: Bool = true
     @AppStorage("enableContextActions") private var enableContextActions: Bool = true
     @AppStorage("bubbleAnimation") private var bubbleAnimation: Bool = true
+    @AppStorage("appLanguage") private var appLanguage: String = "en"
     @StateObject private var speech = SpeechManager()
     @State private var isVisible = false
     @State private var shimmer = false
     @Environment(\.accessibilityReduceMotion) var reduceMotion
+    
+    private var currentLanguage: AppLanguage {
+        AppLanguage(rawValue: appLanguage) ?? .english
+    }
     
     var body: some View {
         HStack {
@@ -22,7 +27,7 @@ struct AnimatedChatBubble: View {
                             Button(action: {
                                 UIPasteboard.general.string = message.text
                             }) {
-                                Label("Copy", systemImage: "doc.on.doc")
+                                Label(LocalizedString.get("copy", language: currentLanguage), systemImage: "doc.on.doc")
                             }
                             
                             Button(action: {
@@ -33,7 +38,7 @@ struct AnimatedChatBubble: View {
                                     rootVC.present(activityVC, animated: true)
                                 }
                             }) {
-                                Label("Share", systemImage: "square.and.arrow.up")
+                                Label(LocalizedString.get("share", language: currentLanguage), systemImage: "square.and.arrow.up")
                             }
                         }
                     }
@@ -42,7 +47,8 @@ struct AnimatedChatBubble: View {
                         Button(action: { 
                             if speech.isSpeaking { speech.stopSpeaking() } else { speech.speak(message.text) }
                         }) {
-                            Label(speech.isSpeaking ? "Stop" : "Listen", systemImage: speech.isSpeaking ? "stop.fill" : "speaker.wave.2")
+                            Label(speech.isSpeaking ? LocalizedString.get("stop", language: currentLanguage) : LocalizedString.get("listen", language: currentLanguage), 
+                                  systemImage: speech.isSpeaking ? "stop.fill" : "speaker.wave.2")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                                 .symbolEffect(.variableColor.iterative, isActive: speech.isSpeaking)

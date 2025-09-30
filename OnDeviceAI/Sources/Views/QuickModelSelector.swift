@@ -13,7 +13,7 @@ struct QuickModelSelector: View {
             VStack {
                 List {
                     // Apple Intelligence (système par défaut)
-                    Section("System AI") {
+                    Section(LocalizedString.get("system_ai", language: currentLanguage)) {
                         Button(action: { 
                             onPick(URL(fileURLWithPath: "/System/AppleIntelligence"))
                             dismiss()
@@ -22,15 +22,15 @@ struct QuickModelSelector: View {
                                 Image(systemName: "brain.head.profile")
                                     .foregroundColor(.blue)
                                 VStack(alignment: .leading, spacing: 4) {
-                                    Text("Apple Intelligence")
+                                    Text(LocalizedString.get("apple_intelligence", language: currentLanguage))
                                         .font(.headline)
                                         .foregroundColor(.primary)
-                                    Text("Neural Engine • System Model")
+                                    Text(LocalizedString.get("neural_engine_model", language: currentLanguage))
                                         .font(.caption)
                                         .foregroundColor(.secondary)
                                 }
                                 Spacer()
-                                Text("Default")
+                                Text(LocalizedString.get("default", language: currentLanguage))
                                     .font(.caption2.weight(.semibold))
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 4)
@@ -43,13 +43,13 @@ struct QuickModelSelector: View {
                     }
                     
                     // Modèles téléchargés (MLX)
-                    Section("Downloaded Models (MLX)") {
+                    Section(LocalizedString.get("downloaded_models_mlx", language: currentLanguage)) {
                         if models.isEmpty {
                             Button(action: { showDownloadSheet = true }) {
                                 HStack {
                                     Image(systemName: "arrow.down.circle.fill")
                                         .foregroundStyle(.green)
-                                    Text("Download More")
+                                    Text(LocalizedString.get("download_more", language: currentLanguage))
                                         .foregroundStyle(.primary)
                                     Spacer()
                                 }
@@ -95,7 +95,7 @@ struct QuickModelSelector: View {
                                 HStack {
                                     Image(systemName: "plus.circle.fill")
                                         .foregroundStyle(.green)
-                                    Text("Download More Models")
+                                    Text(LocalizedString.get("download_more_models", language: currentLanguage))
                                         .foregroundStyle(.primary)
                                     Spacer()
                                 }

@@ -114,10 +114,10 @@ struct SettingsView: View {
             }
 
             // Developer
-            Section("Developer") {
-                NavigationLink("Logs & Memory") { DebugView() }
+            Section(LocalizedString.get("developer", language: currentLanguage)) {
+                NavigationLink(LocalizedString.get("logs_memory", language: currentLanguage)) { DebugView() }
                 
-                Button("Clear app cache (models & history)") {
+                Button(LocalizedString.get("clear_cache", language: currentLanguage)) {
                     showClearConfirmation = true
                 }
                 .foregroundColor(.red)
@@ -139,15 +139,15 @@ struct SettingsView: View {
             }
         }
         .navigationTitle(LocalizedString.get("settings", language: currentLanguage))
-        .alert("Clear Cache", isPresented: $showClearConfirmation) {
-            Button("Cancel", role: .cancel) {}
-                Button(LocalizedString.get("clear", language: currentLanguage), role: .destructive) {
+        .alert(LocalizedString.get("clear_cache_title", language: currentLanguage), isPresented: $showClearConfirmation) {
+            Button(LocalizedString.get("cancel", language: currentLanguage), role: .cancel) {}
+            Button(LocalizedString.get("clear", language: currentLanguage), role: .destructive) {
                 clearCache()
             }
         } message: {
-            Text("This will delete all downloaded models and conversation history. This action cannot be undone.")
+            Text(LocalizedString.get("clear_cache_message", language: currentLanguage))
         }
-        .alert("Cache Cleared", isPresented: $showClearSuccess) {
+        .alert(LocalizedString.get("cache_cleared_title", language: currentLanguage), isPresented: $showClearSuccess) {
             Button("OK") { 
                 showClearSuccess = false
                 clearMessage = ""
