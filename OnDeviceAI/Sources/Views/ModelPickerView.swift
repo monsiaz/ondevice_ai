@@ -2,8 +2,9 @@ import SwiftUI
 
 struct ModelPickerView: View {
     var onPick: (URL) -> Void
+    var startOnAvailable: Bool = false
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedTab = 0
+    @State private var selectedTab = 1 // Default to Available tab
     @State private var installedModels: [LocalModel] = []
     @StateObject private var downloader = ModelDownloader()
     @AppStorage("appLanguage") private var appLanguage: String = "en"
