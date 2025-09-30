@@ -186,7 +186,7 @@ struct ChatView: View {
                         
                         // Force extra space at bottom so last message is well above input bar
                         Spacer()
-                            .frame(height: 125)
+                            .frame(height: UserDefaults.standard.double(forKey: "messageBottomSpace") == 0 ? 125 : UserDefaults.standard.double(forKey: "messageBottomSpace"))
                             .id("bottom-spacer")
                     }
                 }

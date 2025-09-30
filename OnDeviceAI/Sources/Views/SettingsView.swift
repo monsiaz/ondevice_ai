@@ -4,6 +4,8 @@ struct SettingsView: View {
     @AppStorage("appTheme") private var appTheme: String = "system"
     @AppStorage("showKeyboardOnLaunch") private var showKeyboardOnLaunch = false
     @AppStorage("appLanguage") private var appLanguage: String = "en"
+    @State private var showClearConfirmation = false
+    @State private var clearMessage = ""
     
     private var currentLanguage: AppLanguage {
         AppLanguage(rawValue: appLanguage) ?? .english
@@ -11,6 +13,7 @@ struct SettingsView: View {
 
     var body: some View {
         Form {
+            // App Info
             Section {
                 HStack {
                     if let logoImage = UIImage(named: "AppLogo") {
@@ -23,7 +26,7 @@ struct SettingsView: View {
                     VStack(alignment: .leading) {
                         Text(LocalizedString.get("app_name", language: currentLanguage))
                             .font(.headline)
-                        Text("v1.0.0 • \(LocalizedString.get("privacy_tagline", language: currentLanguage))")
+                        Text("v1.4 • \(LocalizedString.get("privacy_tagline", language: currentLanguage))")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                             .lineLimit(2)
@@ -32,7 +35,9 @@ struct SettingsView: View {
                 }
                 .padding(.vertical, 4)
             }
-            Section(LocalizedString.get("language", language: currentLanguage)) {
+            
+            // Language (controls UI, voice, TTS)
+            Section {
                 Picker(LocalizedString.get("language", language: currentLanguage), selection: $appLanguage) {
                     ForEach(AppLanguage.allCases, id: \.rawValue) { lang in
                         Text("\(lang.flag) \(lang.displayName)")
@@ -40,9 +45,27 @@ struct SettingsView: View {
                     }
                 }
                 .pickerStyle(.menu)
-                .labelsHidden()
+                
+                Text("Controls app language, voice dictation, and text-to-speech.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            } header: {
+                Text(LocalizedString.get("language", language: currentLanguage))
             }
             
+            // System Prompt (Personalization)
+            Section {
+                NavigationLink(LocalizedString.get("system_prompt", language: currentLanguage)) { 
+                    PersonalizationView(language: currentLanguage) 
+                }
+            } header: {
+                Text(LocalizedString.get("personalization", language: currentLanguage))
+            } footer: {
+                Text("Customize the AI's behavior and responses")
+                    .font(.caption)
+            }
+            
+            // Appearance
             Section(LocalizedString.get("appearance", language: currentLanguage)) {
                 Picker(LocalizedString.get("theme", language: currentLanguage), selection: $appTheme) {
                     Text(LocalizedString.get("system", language: currentLanguage)).tag("system")
@@ -51,21 +74,7 @@ struct SettingsView: View {
                 }
             }
             
-            Section(LocalizedString.get("language", language: currentLanguage)) {
-                Picker(LocalizedString.get("language", language: currentLanguage), selection: $appLanguage) {
-                    ForEach(AppLanguage.allCases, id: \.rawValue) { lang in
-                        Text("\(lang.flag) \(lang.displayName)")
-                            .tag(lang.rawValue)
-                    }
-                }
-                .pickerStyle(.menu)
-                .labelsHidden()
-                
-                Text("The selected language will be used for voice dictation and text-to-speech.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            
+            // Behavior
             Section(LocalizedString.get("behavior", language: currentLanguage)) {
                 Toggle(LocalizedString.get("show_keyboard_launch", language: currentLanguage), isOn: $showKeyboardOnLaunch)
                 Toggle(LocalizedString.get("keep_keyboard_after_send", language: currentLanguage), isOn: .init(
@@ -73,40 +82,47 @@ struct SettingsView: View {
                     set: { UserDefaults.standard.set($0, forKey: "keepKeyboardAfterSend") }
                 ))
             }
+            
+            // Visual Effects & Animations
+            Section("Visual Effects") {
+                NavigationLink("Animation & Scroll Settings") {
+                    VisualEffectsView()
+                }
+            }
 
+            // Voice & Shortcuts
             Section(LocalizedString.get("advanced_features", language: currentLanguage)) {
-                NavigationLink(LocalizedString.get("voice_and_shortcuts", language: currentLanguage)) { AdvancedFeaturesView(language: currentLanguage) }
+                NavigationLink(LocalizedString.get("voice_and_shortcuts", language: currentLanguage)) { 
+                    AdvancedFeaturesView(language: currentLanguage) 
+                }
             }
 
+            // Models
             Section(LocalizedString.get("models", language: currentLanguage)) {
-                NavigationLink(LocalizedString.get("download_models", language: currentLanguage)) { ModelPickerView(onPick: { _ in }) }
+                NavigationLink(LocalizedString.get("download_models", language: currentLanguage)) { 
+                    ModelPickerView(onPick: { _ in }) 
+                }
             }
 
+            // About
             Section(LocalizedString.get("about", language: currentLanguage)) {
                 NavigationLink(LocalizedString.get("how_it_works", language: currentLanguage)) { HowItWorksView() }
                 NavigationLink(LocalizedString.get("usage_tips", language: currentLanguage)) { UsageTipsView() }
                 NavigationLink(LocalizedString.get("resources", language: currentLanguage)) { ResourcesView() }
                 NavigationLink(LocalizedString.get("legal", language: currentLanguage)) { LegalView(language: currentLanguage) }
-                NavigationLink("Debug") { DebugView() }
             }
 
-            Section("Developer Mode") {
+            // Developer
+            Section("Developer") {
                 NavigationLink("Logs & Memory") { DebugView() }
+                
                 Button("Clear app cache (models & history)") {
-                    ModelManager.shared.clearAll()
-                    HistoryStore.shared.clearAll()
-                    UserDefaults.standard.removeObject(forKey: "chat.history")
-                    UserDefaults.standard.removeObject(forKey: "chat.modelName")
-                    UserDefaults.standard.removeObject(forKey: "chat.backendName")
-                    UserDefaults.standard.removeObject(forKey: "systemPrompt")
+                    showClearConfirmation = true
                 }
                 .foregroundColor(.red)
             }
             
-            Section(LocalizedString.get("personalization", language: currentLanguage)) {
-                NavigationLink(LocalizedString.get("system_prompt", language: currentLanguage)) { PersonalizationView(language: currentLanguage) }
-            }
-            
+            // Connect
             Section(LocalizedString.get("connect", language: currentLanguage)) {
                 Link(destination: URL(string: "https://x.com/SimonAzoulayFr")!) {
                     HStack {
@@ -122,6 +138,97 @@ struct SettingsView: View {
             }
         }
         .navigationTitle(LocalizedString.get("settings", language: currentLanguage))
+        .alert("Clear Cache", isPresented: $showClearConfirmation) {
+            Button("Cancel", role: .cancel) {}
+            Button("Clear", role: .destructive) {
+                clearCache()
+            }
+        } message: {
+            Text("This will delete all downloaded models and conversation history. This action cannot be undone.")
+        }
+        .alert("Cache Cleared", isPresented: .constant(!clearMessage.isEmpty)) {
+            Button("OK") { clearMessage = "" }
+        } message: {
+            Text(clearMessage)
+        }
+    }
+    
+    private func clearCache() {
+        let modelsPath = try? FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: false).appendingPathComponent("Models")
+        let historyPath = try? FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: false).appendingPathComponent("history.json")
+        
+        var freedSpace: UInt64 = 0
+        
+        if let modelsPath = modelsPath,
+           let items = try? FileManager.default.contentsOfDirectory(at: modelsPath, includingPropertiesForKeys: [.fileSizeKey]) {
+            for item in items {
+                if let size = try? item.resourceValues(forKeys: [.fileSizeKey]).fileSize {
+                    freedSpace += UInt64(size)
+                }
+            }
+        }
+        
+        if let historyPath = historyPath,
+           let size = try? historyPath.resourceValues(forKeys: [.fileSizeKey]).fileSize {
+            freedSpace += UInt64(size)
+        }
+        
+        ModelManager.shared.clearAll()
+        HistoryStore.shared.clearAll()
+        UserDefaults.standard.removeObject(forKey: "chat.history")
+        UserDefaults.standard.removeObject(forKey: "chat.modelName")
+        UserDefaults.standard.removeObject(forKey: "chat.backendName")
+        UserDefaults.standard.removeObject(forKey: "systemPrompt")
+        
+        let freedMB = Double(freedSpace) / (1024 * 1024)
+        clearMessage = String(format: "✅ Cache cleared!\n%.1f MB freed", freedMB)
+    }
+}
+
+struct VisualEffectsView: View {
+    @AppStorage("bubbleAnimation") private var bubbleAnimation: Bool = true
+    @AppStorage("scrollAnimation") private var scrollAnimation: Bool = true
+    @AppStorage("messageBottomSpace") private var messageBottomSpace: Double = 125
+    
+    var body: some View {
+        Form {
+            Section {
+                Text("Customize the visual behavior of chat bubbles and scrolling.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            
+            Section("Animations") {
+                Toggle("Bubble entrance animation", isOn: $bubbleAnimation)
+                Toggle("Smooth scroll animation", isOn: $scrollAnimation)
+            }
+            
+            Section("Layout") {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("Space below messages")
+                        Spacer()
+                        Text("\(Int(messageBottomSpace))px")
+                            .foregroundStyle(.secondary)
+                    }
+                    Slider(value: $messageBottomSpace, in: 80...250, step: 10)
+                }
+                
+                Text("Adjusts how much empty space appears below the last message. Higher values lift messages further above the input bar.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            
+            Section {
+                Button("Reset to Defaults") {
+                    bubbleAnimation = true
+                    scrollAnimation = true
+                    messageBottomSpace = 125
+                }
+            }
+        }
+        .navigationTitle("Animation & Scroll")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
@@ -130,7 +237,6 @@ struct LegalView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                // Header avec icône
                 VStack(spacing: 12) {
                     Image(systemName: "doc.text.fill")
                         .font(.system(size: 40))
