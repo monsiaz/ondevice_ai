@@ -47,7 +47,6 @@
 		FED998DA1C22827CC8DE37EB /* DeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02F6D457015E5E3310562F41 /* DeviceInfo.swift */; };
 		FFC464F0D86EE4553298554C /* ModelDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 613C6D96415A90BD33B7DD17 /* ModelDownloader.swift */; };
 		A1B2C3D4E5F6071890ABCDEF /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6071890ABCDE0 /* SpeechManager.swift */; };
-		CAFEBABE123456789ABCDEF0 /* CalendarActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFEBABE123456789ABCDEF1 /* CalendarActions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -90,7 +89,6 @@
 		D97A51E49612B36FA5A7C7DA /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		DAD848930306DE892B962783 /* LocalLLM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalLLM.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F6071890ABCDE0 /* SpeechManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechManager.swift; sourceTree = "<group>"; };
-		CAFEBABE123456789ABCDEF1 /* CalendarActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarActions.swift; sourceTree = "<group>"; };
 		FE807453E641524286C15F09 /* SuggestedPrompts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestedPrompts.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -189,7 +187,6 @@
 				17FDC0E92C982D5EA7824857 /* ModelTranslations.swift */,
 				BFDE1B5F8188D70AF05130F6 /* PromptLibrary.swift */,
 				A1B2C3D4E5F6071890ABCDE0 /* SpeechManager.swift */,
-				CAFEBABE123456789ABCDEF1 /* CalendarActions.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -315,7 +312,6 @@
 				72C024A3F3B2977F0651B274 /* SuggestedPrompts.swift in Sources */,
 				2D422904EF0628A0D1BF2582 /* UsageTipsView.swift in Sources */,
 				A1B2C3D4E5F6071890ABCDEF /* SpeechManager.swift in Sources */,
-				CAFEBABE123456789ABCDEF0 /* CalendarActions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
