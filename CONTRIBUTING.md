@@ -52,7 +52,6 @@ Please feel free to reference this work and share your findings!
 For any contribution ideas, questions, or collaboration opportunities:
 
 **🐦 X/Twitter:** [@SimonAzoulayFr](https://x.com/SimonAzoulayFr)  
-**📧 Email:** simon@ondeviceai.app  
 
 The developer is responsive to DMs on X/Twitter and welcomes technical discussions about privacy-first AI.
 

@@ -47,7 +47,7 @@ struct SettingsView: View {
                 }
                 .pickerStyle(.menu)
                 
-                Text("Controls app language, voice dictation, and text-to-speech.")
+                Text(LocalizedString.get("controls_language_note", language: currentLanguage))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             } header: {
@@ -62,7 +62,7 @@ struct SettingsView: View {
             } header: {
                 Text(LocalizedString.get("personalization", language: currentLanguage))
             } footer: {
-                Text("Customize the AI's behavior and responses")
+                Text(LocalizedString.get("customize_ai_note", language: currentLanguage))
                     .font(.caption)
             }
             
@@ -85,8 +85,8 @@ struct SettingsView: View {
             }
             
             // Visual Effects & Animations
-            Section("Visual Effects") {
-                NavigationLink("Animation & Scroll Settings") {
+            Section(LocalizedString.get("visual_effects", language: currentLanguage)) {
+                NavigationLink(LocalizedString.get("animation_scroll", language: currentLanguage)) {
                     VisualEffectsView()
                 }
             }
@@ -141,7 +141,7 @@ struct SettingsView: View {
         .navigationTitle(LocalizedString.get("settings", language: currentLanguage))
         .alert("Clear Cache", isPresented: $showClearConfirmation) {
             Button("Cancel", role: .cancel) {}
-            Button("Clear", role: .destructive) {
+                Button(LocalizedString.get("clear", language: currentLanguage), role: .destructive) {
                 clearCache()
             }
         } message: {
@@ -158,25 +158,32 @@ struct SettingsView: View {
     }
     
     private func clearCache() {
-        let modelsPath = try? FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: false).appendingPathComponent("Models")
-        let historyPath = try? FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: false).appendingPathComponent("history.json")
-        
         var freedSpace: UInt64 = 0
         
-        if let modelsPath = modelsPath,
-           let items = try? FileManager.default.contentsOfDirectory(at: modelsPath, includingPropertiesForKeys: [.fileSizeKey]) {
-            for item in items {
-                if let size = try? item.resourceValues(forKeys: [.fileSizeKey]).fileSize {
-                    freedSpace += UInt64(size)
+        // Calculate models size
+        let fm = FileManager.default
+        if let supportDir = try? fm.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: false) {
+            let modelsPath = supportDir.appendingPathComponent("Models")
+            if let enumerator = fm.enumerator(at: modelsPath, includingPropertiesForKeys: [.fileSizeKey, .isRegularFileKey]) {
+                for case let fileURL as URL in enumerator {
+                    if let resourceValues = try? fileURL.resourceValues(forKeys: [.fileSizeKey, .isRegularFileKey]),
+                       let isFile = resourceValues.isRegularFile,
+                       isFile,
+                       let fileSize = resourceValues.fileSize {
+                        freedSpace += UInt64(fileSize)
+                    }
                 }
+            }
+            
+            // Calculate history size
+            let historyPath = supportDir.appendingPathComponent("history.json")
+            if let attrs = try? fm.attributesOfItem(atPath: historyPath.path),
+               let fileSize = attrs[.size] as? UInt64 {
+                freedSpace += fileSize
             }
         }
         
-        if let historyPath = historyPath,
-           let size = try? historyPath.resourceValues(forKeys: [.fileSizeKey]).fileSize {
-            freedSpace += UInt64(size)
-        }
-        
+        // Clear everything
         ModelManager.shared.clearAll()
         HistoryStore.shared.clearAll()
         UserDefaults.standard.removeObject(forKey: "chat.history")
@@ -185,7 +192,7 @@ struct SettingsView: View {
         UserDefaults.standard.removeObject(forKey: "systemPrompt")
         
         let freedMB = Double(freedSpace) / (1024 * 1024)
-        clearMessage = String(format: "✅ Cache cleared!\n%.1f MB freed", freedMB)
+        clearMessage = String(format: "✅ Cache cleared!\n%.1f MB freed", max(freedMB, 0.1))
         showClearSuccess = true
     }
 }
@@ -204,14 +211,14 @@ struct VisualEffectsView: View {
             }
             
             Section("Animations") {
-                Toggle("Bubble entrance animation", isOn: $bubbleAnimation)
-                Toggle("Smooth scroll animation", isOn: $scrollAnimation)
+                Toggle(LocalizedString.get("bubble_animation", language: currentLanguage), isOn: $bubbleAnimation)
+                Toggle(LocalizedString.get("smooth_scroll", language: currentLanguage), isOn: $scrollAnimation)
             }
             
             Section("Layout") {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text("Space below messages")
+                        Text(LocalizedString.get("space_below_messages", language: currentLanguage))
                         Spacer()
                         Text("\(Int(messageBottomSpace))px")
                             .foregroundStyle(.secondary)
@@ -225,7 +232,7 @@ struct VisualEffectsView: View {
             }
             
             Section {
-                Button("Reset to Defaults") {
+                Button(LocalizedString.get("reset_defaults", language: currentLanguage)) {
                     bubbleAnimation = true
                     scrollAnimation = true
                     messageBottomSpace = 125
@@ -424,15 +431,15 @@ struct AdvancedFeaturesView: View {
                     .foregroundStyle(.secondary)
             }
             
-            Section("Quick Actions") {
-                Toggle("Context Menu Actions", isOn: $enableContextActions)
-                Text("Enable long-press actions: Copy and Share")
+            Section(LocalizedString.get("quick_actions", language: language)) {
+                Toggle(LocalizedString.get("context_menu", language: language), isOn: $enableContextActions)
+                Text(LocalizedString.get("copy_share_hint", language: language))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
             
             Section {
-                Text("Voice features require microphone permission. You will be prompted when needed.")
+                Text(LocalizedString.get("voice_permission_note", language: language))
                     .font(.caption)
                     .foregroundStyle(.orange)
             }
