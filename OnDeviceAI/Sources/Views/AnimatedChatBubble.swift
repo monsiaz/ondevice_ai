@@ -5,6 +5,7 @@ struct AnimatedChatBubble: View {
     @State private var showTTS = true
     @AppStorage("enableTTS") private var enableTTS: Bool = true
     @AppStorage("enableContextActions") private var enableContextActions: Bool = true
+    @AppStorage("bubbleAnimation") private var bubbleAnimation: Bool = true
     @StateObject private var speech = SpeechManager()
     @State private var isVisible = false
     @State private var shimmer = false
@@ -74,7 +75,8 @@ struct AnimatedChatBubble: View {
             if message.role == .user { Spacer(minLength: 40) }
         }
         .onAppear {
-            if !reduceMotion {
+            // Respect user's animation preference
+            if bubbleAnimation && !reduceMotion {
                 withAnimation(.spring(duration: 0.4, bounce: 0.2)) {
                     isVisible = true
                 }

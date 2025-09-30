@@ -11,6 +11,8 @@ struct ChatView: View {
     
     @AppStorage("showKeyboardOnLaunch") private var showKeyboardOnLaunch = false
     @AppStorage("appLanguage") private var appLanguage: String = "en"
+    @AppStorage("scrollAnimation") private var scrollAnimation: Bool = true
+    @AppStorage("messageBottomSpace") private var messageBottomSpace: Double = 125
     @State private var showMemoryAlert = false
     
     private var currentLanguage: AppLanguage {
@@ -186,7 +188,7 @@ struct ChatView: View {
                         
                         // Force extra space at bottom so last message is well above input bar
                         Spacer()
-                            .frame(height: UserDefaults.standard.double(forKey: "messageBottomSpace") == 0 ? 125 : UserDefaults.standard.double(forKey: "messageBottomSpace"))
+                            .frame(height: messageBottomSpace)
                             .id("bottom-spacer")
                     }
                 }
@@ -249,7 +251,11 @@ struct ChatView: View {
         guard vm.messages.last != nil else { return }
         // Immediate smooth scroll to bottom spacer
         DispatchQueue.main.async {
-            withAnimation(.easeOut(duration: 0.25)) {
+            if scrollAnimation {
+                withAnimation(.easeOut(duration: 0.25)) {
+                    proxy.scrollTo("bottom-spacer", anchor: .bottom)
+                }
+            } else {
                 proxy.scrollTo("bottom-spacer", anchor: .bottom)
             }
         }
