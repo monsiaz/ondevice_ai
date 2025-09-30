@@ -6,6 +6,7 @@ struct QuickModelSelector: View {
     @State private var models: [LocalModel] = []
     @State private var modelToDelete: LocalModel?
     @State private var showingAppleIntelligence = true
+    @State private var showDownloadSheet = false
     
     var body: some View {
         NavigationStack {
@@ -44,8 +45,15 @@ struct QuickModelSelector: View {
                     // Modèles téléchargés (MLX)
                     Section("Downloaded Models (MLX)") {
                         if models.isEmpty {
-                            Text("No downloaded models yet. Apple Intelligence is available by default.")
-                                .foregroundStyle(.secondary)
+                            Button(action: { showDownloadSheet = true }) {
+                                HStack {
+                                    Image(systemName: "arrow.down.circle.fill")
+                                        .foregroundStyle(.green)
+                                    Text("Download More")
+                                        .foregroundStyle(.primary)
+                                    Spacer()
+                                }
+                            }
                         } else {
                             ForEach(models) { model in
                                 Button(action: {
@@ -82,6 +90,16 @@ struct QuickModelSelector: View {
                                 }
                                 .buttonStyle(.plain)
                             }
+                            
+                            Button(action: { showDownloadSheet = true }) {
+                                HStack {
+                                    Image(systemName: "plus.circle.fill")
+                                        .foregroundStyle(.green)
+                                    Text("Download More Models")
+                                        .foregroundStyle(.primary)
+                                    Spacer()
+                                }
+                            }
                         }
                     }
                 }
@@ -90,14 +108,15 @@ struct QuickModelSelector: View {
             .navigationTitle(LocalizedString.get("switch_model", language: currentLanguage))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    NavigationLink(destination: ModelPickerView(onPick: { url in onPick(url); dismiss() })) {
-                        Text(LocalizedString.get("download_more", language: currentLanguage))
-                    }
-                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(LocalizedString.get("done", language: currentLanguage)) { dismiss() }
                 }
+            }
+            .sheet(isPresented: $showDownloadSheet) {
+                ModelPickerView(onPick: { url in 
+                    onPick(url)
+                    dismiss()
+                })
             }
         }
         .onAppear { refresh() }

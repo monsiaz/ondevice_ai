@@ -17,8 +17,10 @@ struct OnDeviceAIApp: App {
         // Register URL scheme
         URLScheme.registerHandlers()
 
-        // Note: No bundled models since v1.2 (removed to avoid App Store routing app detection)
-        // Models are now downloaded on-demand for enhanced flexibility
+        // Auto-install recommended models on first launch
+        Task {
+            await autoInstallRecommendedModels()
+        }
     }
 
     var body: some Scene {
@@ -85,5 +87,39 @@ enum URLScheme {
     static func registerHandlers() {
         // URL scheme registered in Info.plist: ondeviceai://
         print("📱 URL scheme registered: ondeviceai://")
+    }
+}
+
+extension OnDeviceAIApp {
+    private func autoInstallRecommendedModels() async {
+        // Check if models already installed
+        let hasModels = !ModelManager.shared.listInstalled().isEmpty
+        guard !hasModels else {
+            print("📦 Models already installed, skipping auto-install")
+            return
+        }
+        
+        // Auto-download Qwen and TinyLlama on first launch
+        print("📥 First launch: auto-installing recommended models...")
+        
+        let qwen = AvailableModel(
+            name: "qwen2.5-0.5b-instruct-4bit",
+            displayName: "Qwen 2.5 0.5B",
+            description: "Ultra-fast, ideal for quick questions",
+            size: "350 MB",
+            downloadURL: "https://huggingface.co/mlx-community/Qwen2.5-0.5B-Instruct-4bit/resolve/main/",
+            tags: ["Fast", "Recommended"],
+            deviceRequirement: "iPhone 15+",
+            performance: .ultraFast,
+            category: .recommended
+        )
+        
+        let downloader = ModelDownloader()
+        do {
+            try await downloader.downloadModel(qwen)
+            print("✅ Qwen installed successfully")
+        } catch {
+            print("⚠️ Failed to install Qwen: \(error)")
+        }
     }
 }
