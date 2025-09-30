@@ -112,8 +112,13 @@ struct ChatView: View {
                 }
 
                 Button(action: { 
+                    print("🔄 New conversation button tapped")
                     HistoryStore.shared.upsertCurrent(from: vm)
-                    vm.clear(); hideKeyboard() 
+                    print("💾 History saved")
+                    vm.clear()
+                    print("🗑️ Chat cleared")
+                    hideKeyboard()
+                    print("⌨️ Keyboard hidden")
                 }) {
                     Image(systemName: "arrow.counterclockwise")
                         .font(.title2)
