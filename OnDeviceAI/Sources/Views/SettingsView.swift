@@ -424,15 +424,15 @@ struct AdvancedFeaturesView: View {
                     .foregroundStyle(.secondary)
             }
             
-            Section("Shortcuts & Actions") {
+            Section("Quick Actions") {
                 Toggle("Context Menu Actions", isOn: $enableContextActions)
-                Text("Enable long-press actions: Add to Calendar, Create Reminder, Save to Notes")
+                Text("Enable long-press actions: Copy and Share")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
             
             Section {
-                Text("These features require permissions (Microphone, Calendar, Reminders). You will be prompted when needed.")
+                Text("Voice features require microphone permission. You will be prompted when needed.")
                     .font(.caption)
                     .foregroundStyle(.orange)
             }

@@ -19,9 +19,22 @@ struct AnimatedChatBubble: View {
                 Text(message.text)
                     .contextMenu {
                         if enableContextActions {
-                            Button("Add to Calendar") { NotificationCenter.default.post(name: Notification.Name("Action.AddToCalendar"), object: message.text) }
-                            Button("Create Reminder") { NotificationCenter.default.post(name: Notification.Name("Action.CreateReminder"), object: message.text) }
-                            Button("Save to Notes") { NotificationCenter.default.post(name: Notification.Name("Action.SaveToNotes"), object: message.text) }
+                            Button(action: {
+                                UIPasteboard.general.string = message.text
+                            }) {
+                                Label("Copy", systemImage: "doc.on.doc")
+                            }
+                            
+                            Button(action: {
+                                let activityVC = UIActivityViewController(activityItems: [message.text], applicationActivities: nil)
+                                if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                                   let window = scene.windows.first,
+                                   let rootVC = window.rootViewController {
+                                    rootVC.present(activityVC, animated: true)
+                                }
+                            }) {
+                                Label("Share", systemImage: "square.and.arrow.up")
+                            }
                         }
                     }
                 if message.role == .assistant && enableTTS {

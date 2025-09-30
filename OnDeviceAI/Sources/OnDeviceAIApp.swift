@@ -32,15 +32,6 @@ struct OnDeviceAIApp: App {
                 .task {
                     // La logique de configuration initiale est maintenant dans ChatVM
                 }
-                .onReceive(NotificationCenter.default.publisher(for: Notification.Name("Action.AddToCalendar"))) { notif in
-                    if let text = notif.object as? String { CalendarActions.addEvent(with: text) }
-                }
-                .onReceive(NotificationCenter.default.publisher(for: Notification.Name("Action.CreateReminder"))) { notif in
-                    if let text = notif.object as? String { CalendarActions.addReminder(with: text) }
-                }
-                .onReceive(NotificationCenter.default.publisher(for: Notification.Name("Action.SaveToNotes"))) { notif in
-                    if let text = notif.object as? String { CalendarActions.saveToNotes(with: text) }
-                }
                 .onReceive(NotificationCenter.default.publisher(for: Notification.Name("Siri.AskQuestion"))) { notif in
                     if let question = notif.object as? String {
                         chatVM.input = question
