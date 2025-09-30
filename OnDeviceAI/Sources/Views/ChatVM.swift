@@ -326,10 +326,10 @@ final class ChatVM: ObservableObject {
                     
                     await MainActor.run {
                         let timeSinceLastToken = Date().timeIntervalSince(self.lastTokenAt)
-                        if timeSinceLastToken > 1.0 { // Timeout plus long
+                        if timeSinceLastToken > 3.0 { // Extended timeout for demo/stub models
                             consecutiveNoTokens += 1
                             if consecutiveNoTokens >= 2 {
-                                DebugLog.shared.log("Generation completed (timeout after 2 seconds)")
+                                DebugLog.shared.log("Generation completed (timeout after 6 seconds)")
                                 self.finishGeneration(assistantId: assistantId, finalTokenBuffer: localTokenBuffer)
                             }
                         } else {
