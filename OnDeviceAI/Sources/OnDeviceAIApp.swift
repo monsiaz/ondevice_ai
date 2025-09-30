@@ -16,11 +16,6 @@ struct OnDeviceAIApp: App {
         
         // Register URL scheme
         URLScheme.registerHandlers()
-
-        // Auto-install recommended models on first launch
-        Task {
-            await autoInstallRecommendedModels()
-        }
     }
 
     var body: some Scene {
@@ -32,7 +27,8 @@ struct OnDeviceAIApp: App {
                     chatVM.unloadModel()
                 }
                 .task {
-                    // La logique de configuration initiale est maintenant dans ChatVM
+                    // Auto-install recommended models on first launch
+                    await autoInstallRecommendedModels()
                 }
                 .onReceive(NotificationCenter.default.publisher(for: Notification.Name("Siri.AskQuestion"))) { notif in
                     if let question = notif.object as? String {
