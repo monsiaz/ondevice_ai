@@ -170,6 +170,7 @@ struct ChatView: View {
                             }
                         }
                         .padding(.top, 32)
+                        .id("suggested-prompts")
                     } else {
                         ForEach(vm.messages) { message in
                             AnimatedChatBubble(message: message)
@@ -200,7 +201,9 @@ struct ChatView: View {
                 scrollToBottom(proxy: proxy)
             }
             .onReceive(NotificationCenter.default.publisher(for: Notification.Name("ChatVM.didClear"))) { _ in
+                // Scroll to top to show suggested prompts centered
                 withAnimation(.spring()) {
+                    proxy.scrollTo("suggested-prompts", anchor: .center)
                 }
             }
             .onChange(of: vm.isGenerating) { wasGenerating, isGenerating in
