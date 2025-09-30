@@ -217,6 +217,26 @@ final class ChatVM: ObservableObject {
     private func ensureModelLoaded() {
         guard !isModelLoaded else { return }
         
+        // Priority 1: If backendName is "Neural Engine", use Apple Intelligence
+        if backendName == "Neural Engine" || currentModel.contains("Apple Intelligence") {
+            DebugLog.shared.log("Using Apple Intelligence (no loading needed)")
+            isModelLoaded = true
+            modelLoadingStatus = ""
+            return
+        }
+        
+        // Priority 2: If a specific currentModel is set, try to load it
+        if !currentModel.isEmpty && currentModel != "Local model (to download)" {
+            let candidate = currentModel.contains("-4bit") ? currentModel : currentModel + "-4bit"
+            if ModelManager.shared.modelExists(folderName: candidate) {
+                let url = ModelManager.shared.url(for: LocalModel(displayName: candidate, folderName: candidate))
+                DebugLog.shared.log("Loading selected model: \(candidate)")
+                load(modelURL: url)
+                return
+            }
+        }
+        
+        // Priority 3: Fall back to installed models
         if ModelManager.shared.modelExists(folderName: "qwen2.5-0.5b-instruct-4bit") {
             let url = ModelManager.shared.url(for: LocalModel(displayName: "Qwen 2.5 0.5B", folderName: "qwen2.5-0.5b-instruct-4bit"))
             DebugLog.shared.log("Loading Qwen 2.5 0.5B from: \(url.path)")
@@ -226,8 +246,6 @@ final class ChatVM: ObservableObject {
             load(modelURL: ModelManager.shared.url(for: first))
         } else {
             DebugLog.shared.log("No models installed, auto-installing default tiny model")
-            // Auto-bootstrap a tiny, free model so generation works on devices
-            // without Apple Intelligence support (e.g., iPhone 13 mini).
             Task { await self.installAndLoadDefaultTinyModel() }
         }
     }
