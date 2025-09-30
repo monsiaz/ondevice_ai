@@ -87,7 +87,7 @@ struct SettingsView: View {
             // Visual Effects & Animations
             Section(LocalizedString.get("visual_effects", language: currentLanguage)) {
                 NavigationLink(LocalizedString.get("animation_scroll", language: currentLanguage)) {
-                    VisualEffectsView()
+                    VisualEffectsView(language: currentLanguage)
                 }
             }
 
@@ -198,6 +198,7 @@ struct SettingsView: View {
 }
 
 struct VisualEffectsView: View {
+    let language: AppLanguage
     @AppStorage("bubbleAnimation") private var bubbleAnimation: Bool = true
     @AppStorage("scrollAnimation") private var scrollAnimation: Bool = true
     @AppStorage("messageBottomSpace") private var messageBottomSpace: Double = 125
@@ -211,14 +212,14 @@ struct VisualEffectsView: View {
             }
             
             Section("Animations") {
-                Toggle(LocalizedString.get("bubble_animation", language: currentLanguage), isOn: $bubbleAnimation)
-                Toggle(LocalizedString.get("smooth_scroll", language: currentLanguage), isOn: $scrollAnimation)
+                Toggle(LocalizedString.get("bubble_animation", language: language), isOn: $bubbleAnimation)
+                Toggle(LocalizedString.get("smooth_scroll", language: language), isOn: $scrollAnimation)
             }
             
             Section("Layout") {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text(LocalizedString.get("space_below_messages", language: currentLanguage))
+                        Text(LocalizedString.get("space_below_messages", language: language))
                         Spacer()
                         Text("\(Int(messageBottomSpace))px")
                             .foregroundStyle(.secondary)
@@ -232,7 +233,7 @@ struct VisualEffectsView: View {
             }
             
             Section {
-                Button(LocalizedString.get("reset_defaults", language: currentLanguage)) {
+                Button(LocalizedString.get("reset_defaults", language: language)) {
                     bubbleAnimation = true
                     scrollAnimation = true
                     messageBottomSpace = 125
