@@ -184,7 +184,7 @@ struct ChatView: View {
                         }
                     }
                 }
-                .padding(.bottom, keyboard.height > 0 ? keyboard.height + 20 : inputBarHeight + 26)
+                .padding(.bottom, keyboard.height > 0 ? keyboard.height + 80 : inputBarHeight + 100)
             }
             .scrollDismissesKeyboard(.interactively)
             .scrollIndicators(.hidden)
