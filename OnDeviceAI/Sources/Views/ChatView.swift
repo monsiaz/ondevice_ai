@@ -182,9 +182,13 @@ struct ChatView: View {
                                     .padding(.trailing)
                             }
                         }
+                        
+                        // Force extra space at bottom so last message is well above input bar
+                        Color.clear
+                            .frame(height: 200)
                     }
                 }
-                .padding(.bottom, keyboard.height > 0 ? keyboard.height + 150 : inputBarHeight + 200)
+                .padding(.bottom, keyboard.height > 0 ? keyboard.height : 0)
             }
             .scrollDismissesKeyboard(.interactively)
             .scrollIndicators(.hidden)
