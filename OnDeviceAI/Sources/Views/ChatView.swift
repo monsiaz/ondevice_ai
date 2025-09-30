@@ -237,7 +237,7 @@ struct ChatView: View {
                     .onAppear { inputBarHeight = proxy.size.height }
                     .onChange(of: proxy.size.height) { _, newValue in inputBarHeight = newValue }
             }
-            .background(.regularMaterial)
+            .background(.thinMaterial)
         )
     }
 
