@@ -201,9 +201,13 @@ struct ChatView: View {
                 scrollToBottom(proxy: proxy)
             }
             .onReceive(NotificationCenter.default.publisher(for: Notification.Name("ChatVM.didClear"))) { _ in
-                // Scroll to top to show suggested prompts centered
-                withAnimation(.spring()) {
-                    proxy.scrollTo("suggested-prompts", anchor: .center)
+                // Scroll to top immediately to show suggested prompts
+                DispatchQueue.main.async {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        if let firstPromptId = "suggested-prompts" as? String {
+                            proxy.scrollTo(firstPromptId, anchor: .top)
+                        }
+                    }
                 }
             }
             .onChange(of: vm.isGenerating) { wasGenerating, isGenerating in
@@ -242,11 +246,10 @@ struct ChatView: View {
     }
 
     private func scrollToBottom(proxy: ScrollViewProxy) {
-        guard let lastId = vm.messages.last?.id else { return }
-        // Scroll to show the last message with space below it
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-            withAnimation(.easeOut(duration: 0.3)) {
-                // Scroll to bottom-spacer instead of last message to ensure space
+        guard vm.messages.last != nil else { return }
+        // Immediate smooth scroll to bottom spacer
+        DispatchQueue.main.async {
+            withAnimation(.easeOut(duration: 0.25)) {
                 proxy.scrollTo("bottom-spacer", anchor: .bottom)
             }
         }
